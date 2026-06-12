@@ -1,0 +1,16 @@
+{
+  "name": "競馬予想 — 回収率重視・期待値型",
+  "short_name": "競馬予想",
+  "description": "宝塚記念2026ほか、5視点分析と期待値で組み立てる回収率重視の競馬予想。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1620",
+  "theme_color": "#102132",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

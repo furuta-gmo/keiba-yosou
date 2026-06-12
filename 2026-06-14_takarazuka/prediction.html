@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宝塚記念2026 最終予想 v2</title>
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#102132">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="競馬予想">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('../sw.js')})}</script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="race-tag">G1 ・ 回収率重視・期待値型</span>
+    <h1>宝塚記念 2026 ― 最終予想 <span style="color:var(--acc)">v2</span></h1>
+    <div class="sub">調教後馬体重・M血統・前日オッズ・外部2予想(ChatGPT/Claude Chat)反映版</div>
+    <div class="meta">
+      <span class="chip"><b>6/14(日)</b> 阪神11R</span>
+      <span class="chip">芝<b>2200m</b>(内回り・急坂)</span>
+      <span class="chip">15:40発走 / <b>18頭</b></span>
+      <span class="chip">前提:<b>良〜稍重</b>(道悪リスク有)</span>
+    </div>
+  </header>
+
+  <!-- 詳細ナビ -->
+  <section>
+    <h2><span class="no">▸</span>詳細を見る</h2>
+    <div class="navcards">
+      <a class="navcard" href="research.html"><div class="ic">📋</div><div class="ti">情報まとめ (research)</div><div class="ds">出馬表・調教後馬体重・M血統・オッズ・展開メモ</div></a>
+      <a class="navcard" href="analysis/1_展開予想.html"><div class="ic">🏇</div><div class="ti">① 展開予想</div><div class="ds">ペース想定と有利な脚質</div></a>
+      <a class="navcard" href="analysis/2_血統.html"><div class="ic">🧬</div><div class="ti">② 血統</div><div class="ds">急坂・距離・道悪適性</div></a>
+      <a class="navcard" href="analysis/3_近走成績.html"><div class="ic">📈</div><div class="ti">③ 近走成績</div><div class="ds">フォーム・タイム・相手関係</div></a>
+      <a class="navcard" href="analysis/4_馬場適性.html"><div class="ic">🌦️</div><div class="ti">④ 馬場適性</div><div class="ds">コース・天候・道悪対応</div></a>
+      <a class="navcard" href="analysis/5_オッズ分析.html"><div class="ic">💰</div><div class="ti">⑤ オッズ分析</div><div class="ds">期待値・妙味・過剰人気</div></a>
+    </div>
+  </section>
+
+  <!-- 結論 -->
+  <section>
+    <h2><span class="no">1</span>結論サマリー</h2>
+    <div class="verdict">
+      <span class="big">勝負</span>
+      <span class="mut">連系中心・少点数。単勝はダノン1点のみ。クロワは連対軸として使い<b style="color:#ffd34d">頭固定しない</b>。</span>
+    </div>
+    <div class="picks">
+      <div class="pick"><span class="mk honmei">◎</span><span class="nm">1 ダノンデサイル</span>
+        <small>本命・妙味軸 EV~1.34 / 522(+6)良好・M血統◯地×地</small></div>
+      <div class="pick"><span class="mk taikou">○</span><span class="nm">5 クロワデュノール</span>
+        <small>連対信頼No.1の軸 / 馬体回復確認・但し単勝は消し</small></div>
+      <div class="pick"><span class="mk taikou">○</span><span class="nm">16 メイショウタバル</span>
+        <small>逃げ・道悪の王 / 道悪なら本命級へ昇格</small></div>
+      <div class="pick"><span class="mk tanana">▲</span><span class="nm">2 ミュージアムマイル</span>
+        <small>能力上位も半年ぶり＋距離でやや割引</small></div>
+      <div class="pick"><span class="mk himo">☆</span><span class="nm">6 ビザンチンドリーム</span>
+        <small>M血統◯地×地の妙味ヒモ</small></div>
+      <div class="pick"><span class="mk himo">☆</span><span class="nm">9 コスモキュランダ</span>
+        <small>中穴の押さえ</small></div>
+      <div class="pick"><span class="mk down">▽</span><span class="nm">15 マイユニバース</span>
+        <small>降格。+30kg＋オッズ短縮で妙味消失(当日待ち)</small></div>
+    </div>
+    <p style="margin-top:14px"><b>ひとことで：</b>v1の「ダノン妙味軸」は維持。市場が買い上げたマイユニバースを外し、馬体良好な<b>ダノン・クロワの2頭軸</b>に絞る。</p>
+  </section>
+
+  <!-- 3予想収束 -->
+  <section>
+    <h2><span class="no">2</span>3つの予想の収束点</h2>
+    <table>
+      <thead><tr><th>論点</th><th>本予想(回収率型)</th><th>ChatGPT</th><th>Claude Chat</th></tr></thead>
+      <tbody>
+        <tr><td>クロワの単勝</td><td>買わない(EV0.72)</td><td>買わない</td><td>買わない</td></tr>
+        <tr><td>クロワの役割</td><td>連系の信頼軸</td><td>A軸(ワイド/3連複)</td><td>A軸</td></tr>
+        <tr><td>ダノンデサイル</td><td><span class="tag t-buy">◎妙味軸</span></td><td>B+筆頭</td><td>B+筆頭</td></tr>
+        <tr><td>マイユニバース</td><td>☆→降格</td><td>B+→C+降格</td><td>当日判断</td></tr>
+        <tr><td>本線の接続</td><td>5-1軸</td><td>5-1(RED-A筆頭)</td><td>5-1</td></tr>
+      </tbody>
+    </table>
+    <div class="conv">3予想は「<b>クロワを勝ち負けでは買わず、クロワ-ダノンの連対を軸に、相手で回収する</b>」点で完全に収束。一見逆に見えた回収率型と能力型が、同じ結論に着地。</div>
+  </section>
+
+  <!-- 期待値 -->
+  <section>
+    <h2><span class="no">3</span>期待値テーブル（前日オッズ更新版）</h2>
+    <p class="mut">EV = 想定勝率 × 単勝オッズ。EV&gt;1.0 が「買い」ゾーン。</p>
+    <table>
+      <thead><tr><th>馬</th><th class="num">想定勝率</th><th class="num">単勝</th><th class="num">EV</th><th>判定</th><th>メモ</th></tr></thead>
+      <tbody>
+        <tr><td>1 ダノンデサイル</td><td class="num">14%</td><td class="num">9.6</td><td class="num ev-hi">1.34</td><td><span class="tag t-buy">◎買い</span></td><td>522(+6)・◯地×地。最内枠は留意</td></tr>
+        <tr><td>2 ミュージアムマイル</td><td class="num">15%</td><td class="num">6.4</td><td class="num">0.96</td><td><span class="tag t-mut">▲</span></td><td>510(+8)・半年ぶり</td></tr>
+        <tr><td>16 メイショウタバル</td><td class="num">16%</td><td class="num">5.7</td><td class="num">0.91</td><td><span class="tag t-mut">○</span></td><td>506(+6)・道悪で上昇</td></tr>
+        <tr><td>17 レガレイラ</td><td class="num">9%</td><td class="num">10.1</td><td class="num">0.91</td><td><span class="tag t-mut">△</span></td><td>494(+12)・大外枠</td></tr>
+        <tr><td>5 クロワデュノール</td><td class="num">30%</td><td class="num">2.4</td><td class="num">0.72</td><td><span class="tag t-warn">○軸/単勝は消し</span></td><td>516(+2)健康・▲2-3着の壁</td></tr>
+        <tr><td>6 ビザンチンドリーム</td><td class="num">3.5%</td><td class="num">21</td><td class="num">0.74</td><td><span class="tag t-buy">☆ヒモ</span></td><td>◯地×地で妙味</td></tr>
+        <tr><td>9 コスモキュランダ</td><td class="num">2.5%</td><td class="num">35.8</td><td class="num">0.90</td><td><span class="tag t-buy">☆ヒモ</span></td><td>中穴</td></tr>
+        <tr><td>15 マイユニバース</td><td class="num">5%</td><td class="num">13.4</td><td class="num">0.67</td><td><span class="tag t-red">▽降格</span></td><td><b>+30kg・オッズ短縮で妙味消失</b></td></tr>
+      </tbody>
+    </table>
+    <p class="mut" style="margin-top:10px">v1で妙味だったマイユニ(24.8→13.4)・コスモ(47.7→35.8)はオッズ短縮でEVが1.0割れ。<b style="color:var(--tx)">残る明確な妙味はダノン1点。</b> → 詳細は <a href="analysis/5_オッズ分析.html">⑤オッズ分析</a></p>
+  </section>
+
+  <!-- 買い目 -->
+  <section>
+    <h2><span class="no">4</span>推奨買い目（クロワ-ダノン2頭軸／予算10,000円例）</h2>
+    <table>
+      <thead><tr><th>券種</th><th>買い目</th><th class="num">金額</th><th>狙い</th></tr></thead>
+      <tbody>
+        <tr><td>馬連</td><td>1-5（ダノン-クロワ）</td><td class="num">1,500</td><td>本線。両軸の連対</td></tr>
+        <tr><td>馬連</td><td>5-16（クロワ-タバル）</td><td class="num">400</td><td>道悪保険</td></tr>
+        <tr><td>単勝</td><td>1（ダノンデサイル）</td><td class="num">500</td><td>唯一の妙味単(少額)</td></tr>
+        <tr><td>ワイド</td><td>1-5</td><td class="num">1,000</td><td>的中率の土台</td></tr>
+        <tr><td>ワイド</td><td>5-16 / 1-16 / 5-2</td><td class="num">各400</td><td>信頼軸の薄め拡げ</td></tr>
+        <tr><td>ワイド</td><td>1-6（ダノン-ビザンチン）</td><td class="num">500</td><td>M血統◯ヒモへ妙味</td></tr>
+        <tr><td>ワイド</td><td>5-9 / 1-9（コスモ）</td><td class="num">各300</td><td>中穴の押さえ</td></tr>
+        <tr><td>ワイド</td><td>5-17</td><td class="num">200</td><td>レガレイラ保険</td></tr>
+        <tr><td>三連複</td><td>5-1軸 → 16</td><td class="num">800</td><td>本線(クロワ-ダノン-タバル)</td></tr>
+        <tr><td>三連複</td><td>5-1軸 → 2 / 6 / 9</td><td class="num">各500</td><td>ミュージアム/ビザンチン/コスモ</td></tr>
+        <tr><td>三連複</td><td>5-1軸 → 17 / 4</td><td class="num">各300</td><td>レガレイラ/ミクニ展開</td></tr>
+        <tr><td>三連複</td><td>5-6-16 / 1-6-16（A不在保険）</td><td class="num">各300</td><td>軸1頭が飛んだ時のB系</td></tr>
+        <tr><td>三連複</td><td>5-2-16</td><td class="num">200</td><td>上位人気の堅め押さえ</td></tr>
+      </tbody>
+    </table>
+    <div class="total"><span>合計（予算上限内）</span><span class="amt">≈ 10,000 円</span></div>
+    <p style="margin-top:12px"><b>配分思想：</b>クロワ-ダノンを2頭軸に固定して的中率を担保しつつ、相手で妙味（ダノン・ビザンチン）を取りに行く。クロワは連系の銀行としてのみ使い、単勝では買わない。</p>
+  </section>
+
+  <!-- 5視点分析 -->
+  <section>
+    <h2><span class="no">5</span>5視点サブエージェントの分析（要約）</h2>
+    <div class="agrid">
+      <a class="acard" href="analysis/1_展開予想.html"><h4>① 展開予想 →</h4>
+        <ul><li>タバル単騎逃げ→締まったミドル〜やや速め</li><li>有利脚質=先行〜好位差し(2〜6番手)</li><li>展開利TOP:クロワ・ダノン・タバル・ミュージアム</li></ul>
+        <div class="conf">確信度: 中</div></a>
+      <a class="acard" href="analysis/2_血統.html"><h4>② 血統 →</h4>
+        <ul><li>当舞台本流=ゴールドシップ系(タバル)</li><li>クロワ(キタサンブラック)も2200理想</li><li>道悪ならゴルシ産駒2頭の評価上昇</li></ul>
+        <div class="conf">確信度: 中</div></a>
+      <a class="acard" href="analysis/3_近走成績.html"><h4>③ 近走成績 →</h4>
+        <ul><li>フォーム:クロワ＞タバル＞ダノン</li><li>ダノンは良馬場×急坂【3-0-4-0】の安定感</li><li>ミュージアム/レガレイラは半年ぶり</li></ul>
+        <div class="conf">確信度: 中〜高</div></a>
+      <a class="acard" href="analysis/4_馬場適性.html"><h4>④ 馬場適性 →</h4>
+        <ul><li>14日午後は雨予報→稍重〜重リスク</li><li>良馬場ならダノン、道悪ならタバル</li><li>当日の含水率・クッション値を必ず確認</li></ul>
+        <div class="conf">確信度: 中</div></a>
+      <a class="acard" href="analysis/5_オッズ分析.html"><h4>⑤ オッズ妙味 →</h4>
+        <ul><li>明確な過小評価はダノン9.6(EV1.34)のみ</li><li>クロワ2.4倍は単勝で買わない</li><li>深い人気薄はオッズ短縮で妙味縮小</li></ul>
+        <div class="conf">確信度: 中</div></a>
+      <a class="acard" href="research.html"><h4>＋ 馬体重(新データ) →</h4>
+        <ul><li>上位4頭は減点なし(クロワ516/タバル506/ダノン522)</li><li><b style="color:#ff9a8a">マイユニ+30kgのみ要警戒</b></li><li>レガレイラ488前後なら好材料</li></ul>
+        <div class="conf">出典: 調教後馬体重Excel</div></a>
+    </div>
+  </section>
+
+  <!-- リスク -->
+  <section>
+    <h2><span class="no">6</span>リスク・取りこぼし要因</h2>
+    <ul>
+      <li><b class="danger">ダノンの最内枠×戸崎：</b>1番枠でインに包まれ詰まる「毎日杯型」リスク。◎だが頭一本被りは避け連系で広く取る。</li>
+      <li><b class="danger">道悪化：</b>ダノン軸の前提が崩れる→タバル中心へ組替（下記§7）。</li>
+      <li><b>クロワが普通に勝つ：</b>能力最上位。だからこそ連系の軸に据え、相手で回収。単勝で取りこぼしても連系で拾う設計。</li>
+      <li><b>マイユニが当日絞れて激走：</b>+30kgが成長分なら一発も。当日5-15を少額復活させる余地。</li>
+    </ul>
+  </section>
+
+  <!-- 直前チェック -->
+  <section>
+    <h2><span class="no">7</span>直前チェック項目（当日朝〜締切前）</h2>
+    <div class="warnbox" style="margin-bottom:12px">
+      <b>最重要：馬場状態</b> ― 含水率・クッション値・A/Bコース・内外バイアス。
+      <b>稍重以上ならタバルを◎へ、ダノンを○以下へ。</b> 道悪繰上げ第1=ビザンチン6、第2=マイネルエンペラー12。
+    </div>
+    <ol class="check">
+      <li><b>マイユニバース15の当日馬体重：</b>480〜486=戻し再評価(5-15復活) / 488〜492=据置 / 494以上=薄く / 498のまま=消し寄り</li>
+      <li><b>ダノン1の単勝：</b>8倍以上なら妙味維持。6倍以下なら単勝を削りワイド中心へ</li>
+      <li><b>ミュージアム2：</b>当日510超＋パドック太め映りなら②絡み縮小</li>
+      <li><b>レガレイラ17：</b>488前後なら好材料、494以上なら割引</li>
+      <li>パドック/返し馬：半年ぶり組の気配、タバルの折り合い</li>
+    </ol>
+  </section>
+
+  <footer>
+    宝塚記念2026 最終予想 v2 ／ 方針: 回収率重視・期待値型（CLAUDE.md準拠）<br>
+    ※馬券は自己責任。本資料は情報整理・分析支援であり的中や利益を保証しません。資金管理を厳守してください。<br>
+    想定オッズは前日時点。最終オッズ・当日馬場で要再確認。
+  </footer>
+
+</div>
+</body>
+</html>
