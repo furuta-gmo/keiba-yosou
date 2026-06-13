@@ -1,6 +1,6 @@
 /* 競馬予想PWA Service Worker
    バージョンを上げる(=CACHEを変える)と、次回オンライン時に更新が反映されます。 */
-const CACHE = 'keiba-yosou-v7';
+const CACHE = 'keiba-yosou-v8';
 
 const ASSETS = [
   './',
@@ -11,6 +11,7 @@ const ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './2026-06-14_takarazuka/prediction.html',
+  './2026-06-14_takarazuka/odds.html',
   './2026-06-14_takarazuka/research.html',
   './2026-06-14_takarazuka/style.css',
   './2026-06-14_takarazuka/analysis/1_展開予想.html',

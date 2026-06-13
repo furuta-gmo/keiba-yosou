@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>オッズ計算機 — 宝塚記念2026</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  .oddsrow input{width:72px;background:#0e1a26;border:1px solid var(--line);color:var(--tx);
+    border-radius:8px;padding:6px 8px;font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+  .oddsrow input:focus{outline:none;border-color:var(--acc)}
+  .ev{font-weight:800;font-variant-numeric:tabular-nums}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+  .btn{background:#0e1a26;border:1px solid var(--line);color:var(--tx);border-radius:10px;
+    padding:8px 14px;font-size:13px;cursor:pointer}
+  .btn:hover{border-color:var(--acc)}
+  .btn.primary{background:rgba(45,212,191,.15);border-color:var(--acc);color:#7ef0bd}
+  .stamp{color:var(--mut);font-size:12px}
+  .sumcard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:10px}
+  .sumcard h4{margin:0 0 8px;color:var(--acc2);font-size:14px}
+  .pill{display:inline-block;background:#0e1a26;border:1px solid var(--line);border-radius:999px;
+    padding:3px 10px;margin:3px 4px 0 0;font-size:13px}
+  .pill b{color:#fff}
+  th.small,td.small{padding:7px 6px;font-size:12.5px}
+  .axis{color:#ffd34d;font-weight:700}
+</style>
+<meta name="theme-color" content="#102132">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="競馬予想">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('../sw.js')})}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="prediction.html">← 予想に戻る</a>
+
+  <header class="hero">
+    <span class="race-tag">オッズ計算機 / 予想アップデート</span>
+    <h1>最新オッズで再計算 🧮</h1>
+    <div class="sub">単勝オッズを入れると、その場で期待値(EV)・妙味判定・相手の推奨比重が更新されます。入力はこの端末に保存（オフラインOK）。</div>
+  </header>
+
+  <section>
+    <div class="controls">
+      <button class="btn primary" id="sortBtn">妙味順に並べ替え ⇅</button>
+      <button class="btn" id="resetBtn">v5の値に戻す</button>
+      <span class="stamp" id="stamp"></span>
+    </div>
+    <p class="mut" style="font-size:12.5px;margin:2px 0 6px">想定勝率＝私(Claude)のモデル値。編集も可能。EV = 想定勝率 × 単勝オッズ。<b>EV&gt;1.1=妙味 / 0.85未満=過剰人気</b>。</p>
+    <div style="overflow-x:auto">
+    <table id="tbl">
+      <thead><tr>
+        <th class="small">馬</th>
+        <th class="small num">想定勝率%</th>
+        <th class="small num">単勝オッズ</th>
+        <th class="small num">EV</th>
+        <th class="small">判定</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">▸</span>サマリー（自動更新）</h2>
+    <div class="sumcard">
+      <h4>🟢 妙味TOP（EVが高い・クロワ除く）= 相手で厚くしたい馬</h4>
+      <div id="topValue"></div>
+    </div>
+    <div class="sumcard">
+      <h4>🔴 過剰人気（EVが低い）= 軸頭固定や単勝は避ける馬</h4>
+      <div id="overbet"></div>
+    </div>
+    <div class="sumcard">
+      <h4>⚖️ 相手の推奨比重（クロワ軸の連系）</h4>
+      <div id="weights"></div>
+      <p class="mut" style="font-size:12px;margin:8px 0 0">厚め=EV1.1以上 / 中=0.95〜1.1 / 軽め=0.8〜0.95 / 消し寄り=0.8未満。<br>※精密な買い目（回収床・3連複の組合せ）の再設計が必要なら、Claudeに「最新オッズで予想を更新して」と頼んでください。</p>
+    </div>
+  </section>
+
+  <footer>
+    オッズ計算機 / 宝塚記念2026 ｜ <a href="prediction.html">予想(v5)へ</a><br>
+    ※想定勝率はモデルの目安。馬券は自己責任で、最終判断はご自身で。
+  </footer>
+</div>
+
+<script>
+(function(){
+  // 馬番, 馬名, 既定の想定勝率(%), v5の単勝オッズ
+  var BASE = [
+    {n:5,  name:'クロワデュノール',  p:62,  o:1.2,  axis:true},
+    {n:16, name:'メイショウタバル',  p:9,   o:10.0},
+    {n:2,  name:'ミュージアムマイル',p:7,   o:11.9},
+    {n:1,  name:'ダノンデサイル',    p:8,   o:12.5},
+    {n:17, name:'レガレイラ',        p:5,   o:12.0},
+    {n:15, name:'マイユニバース',    p:2.5, o:31.6},
+    {n:6,  name:'ビザンチンドリーム',p:1.5, o:66.1},
+    {n:9,  name:'コスモキュランダ',  p:1.5, o:91.1},
+    {n:4,  name:'ミクニインスパイア',p:1.0, o:107.6},
+    {n:8,  name:'タガノデュード',    p:0.4, o:97.9},
+    {n:13, name:'シェイクユアハート',p:0.3, o:127.9},
+    {n:11, name:'シンエンペラー',    p:0.3, o:145.9},
+    {n:12, name:'マイネルエンペラー',p:0.2, o:189.4},
+    {n:14, name:'スティンガーグラス',p:0.2, o:217.3},
+    {n:10, name:'ジューンテイク',    p:0.1, o:289.0},
+    {n:18, name:'ミステリーウェイ',  p:0.1, o:330.4},
+    {n:3,  name:'シュガークン',      p:0.1, o:372.4},
+    {n:7,  name:'ファミリータイム',  p:0.05,o:476.3}
+  ];
+  var KEY='takarazuka2026-odds-v1';
+  var state={}, sortByEv=false;
+
+  function load(){
+    try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); state=s.data||{}; if(s.t)stamp(s.t);}catch(e){state={};}
+  }
+  function save(){
+    var t=Date.now();
+    try{ localStorage.setItem(KEY, JSON.stringify({data:state,t:t})); }catch(e){}
+    stamp(t);
+  }
+  function stamp(t){
+    var d=new Date(t);
+    var z=function(x){return ('0'+x).slice(-2);};
+    document.getElementById('stamp').textContent='最終更新 '+(d.getMonth()+1)+'/'+d.getDate()+' '+z(d.getHours())+':'+z(d.getMinutes());
+  }
+  function val(h){
+    var s=state[h.n]||{};
+    return { p: s.p!=null? s.p : h.p, o: s.o!=null? s.o : h.o };
+  }
+  function ev(h){ var v=val(h); return (v.p/100)*v.o; }
+  function judge(e,axis){
+    if(axis) return {t:'軸・単勝×', c:'t-warn'};
+    if(e>=1.10) return {t:'妙味(買い)', c:'t-buy'};
+    if(e>=1.00) return {t:'やや妙味', c:'t-buy'};
+    if(e>=0.85) return {t:'中', c:'t-mut'};
+    return {t:'過剰人気', c:'t-red'};
+  }
+  function weight(e){
+    if(e>=1.10) return '厚め';
+    if(e>=0.95) return '中';
+    if(e>=0.80) return '軽め';
+    return '消し寄り';
+  }
+
+  function render(){
+    var rows=BASE.slice();
+    if(sortByEv) rows.sort(function(a,b){ return ev(b)-ev(a); });
+    var tb=document.getElementById('tbody'); tb.innerHTML='';
+    rows.forEach(function(h){
+      var v=val(h), e=ev(h), j=judge(e,h.axis);
+      var tr=document.createElement('tr'); tr.className='oddsrow';
+      tr.innerHTML =
+        '<td class="small"'+(h.axis?' class="axis"':'')+'>'+h.n+' '+h.name+'</td>'+
+        '<td class="small num"><input inputmode="decimal" data-n="'+h.n+'" data-k="p" value="'+v.p+'"></td>'+
+        '<td class="small num"><input inputmode="decimal" data-n="'+h.n+'" data-k="o" value="'+v.o+'"></td>'+
+        '<td class="small num ev" style="color:'+(e>=1.10?'#7ef0bd':e<0.85?'#ffb27a':'#e8eef5')+'">'+e.toFixed(2)+'</td>'+
+        '<td class="small"><span class="tag '+j.c+'">'+j.t+'</span></td>';
+      tb.appendChild(tr);
+    });
+    bindInputs();
+    summary();
+  }
+  function bindInputs(){
+    var ins=document.querySelectorAll('#tbody input');
+    ins.forEach(function(inp){
+      inp.addEventListener('input', function(){
+        var n=+inp.getAttribute('data-n'), k=inp.getAttribute('data-k');
+        var num=parseFloat(inp.value);
+        state[n]=state[n]||{};
+        state[n][k]= isNaN(num)? null : num;
+        save();
+        // EV/判定のみ即時更新（並べ替えはしない＝入力中に行が動かない）
+        liveUpdate();
+      });
+    });
+  }
+  function liveUpdate(){
+    var trs=document.querySelectorAll('#tbody tr');
+    trs.forEach(function(tr){
+      var inp=tr.querySelector('input'); if(!inp)return;
+      var n=+inp.getAttribute('data-n');
+      var h=BASE.filter(function(x){return x.n===n;})[0];
+      var e=ev(h), j=judge(e,h.axis);
+      var evc=tr.querySelector('.ev'); evc.textContent=e.toFixed(2);
+      evc.style.color=(e>=1.10?'#7ef0bd':e<0.85?'#ffb27a':'#e8eef5');
+      var tag=tr.querySelector('.tag'); tag.className='tag '+j.c; tag.textContent=j.t;
+    });
+    summary();
+  }
+  function summary(){
+    var others=BASE.filter(function(h){return !h.axis;});
+    var byEv=others.slice().sort(function(a,b){return ev(b)-ev(a);});
+    // 妙味TOP（EV>=1.0を最大5頭）
+    var top=byEv.filter(function(h){return ev(h)>=1.0;}).slice(0,5);
+    document.getElementById('topValue').innerHTML = top.length? top.map(function(h){
+      return '<span class="pill"><b>'+h.n+' '+h.name+'</b> EV '+ev(h).toFixed(2)+'</span>';
+    }).join('') : '<span class="mut">EV1.0以上の妙味馬なし（堅い相場）</span>';
+    // 過剰人気（人気上位=オッズ低い順の中でEVが低い）
+    var pop=others.slice().sort(function(a,b){return val(a).o-val(b).o;}).slice(0,6);
+    var over=pop.filter(function(h){return ev(h)<0.85;});
+    document.getElementById('overbet').innerHTML = over.length? over.map(function(h){
+      return '<span class="pill"><b>'+h.n+' '+h.name+'</b> EV '+ev(h).toFixed(2)+'</span>';
+    }).join('') : '<span class="mut">人気上位に過剰評価なし</span>';
+    // 相手の推奨比重
+    document.getElementById('weights').innerHTML = byEv.map(function(h){
+      var w=weight(ev(h));
+      var col = w==='厚め'?'#5ee08e': w==='中'?'#e8eef5': w==='軽め'?'#ffd97a':'#ffb27a';
+      return '<span class="pill"><b>'+h.n+' '+h.name+'</b> <span style="color:'+col+'">'+w+'</span> ('+ev(h).toFixed(2)+')</span>';
+    }).join('');
+  }
+
+  document.getElementById('sortBtn').addEventListener('click', function(){ sortByEv=!sortByEv; render(); });
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if(confirm('入力をv5の既定オッズに戻しますか？')){ state={}; save(); render(); }
+  });
+
+  load(); render();
+})();
+</script>
+</body>
+</html>
