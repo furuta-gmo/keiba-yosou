@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>オッズ計算機 — 府中牝馬S2026</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  .oddsrow input{width:72px;background:#0e1a26;border:1px solid var(--line);color:var(--tx);
+    border-radius:8px;padding:6px 8px;font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+  .oddsrow input:focus{outline:none;border-color:var(--acc)}
+  .ev{font-weight:800;font-variant-numeric:tabular-nums}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+  .btn{background:#0e1a26;border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer}
+  .btn:hover{border-color:var(--acc)}
+  .btn.primary{background:rgba(45,212,191,.15);border-color:var(--acc);color:#7ef0bd}
+  .stamp{color:var(--mut);font-size:12px}
+  .sumcard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:10px}
+  .sumcard h4{margin:0 0 8px;color:var(--acc2);font-size:14px}
+  .pill{display:inline-block;background:#0e1a26;border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin:3px 4px 0 0;font-size:13px}
+  .pill b{color:#fff}
+  th.small,td.small{padding:7px 6px;font-size:12.5px}
+</style>
+<meta name="theme-color" content="#102132">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="競馬予想">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('../sw.js')})}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="prediction.html">← 予想に戻る</a>
+
+  <header class="hero">
+    <span class="race-tag">オッズ計算機 / 予想アップデート</span>
+    <h1>最新オッズで再計算 🧮</h1>
+    <div class="sub">単勝オッズを入れると、EV・妙味・相手比重が即更新。入力は端末に保存（オフラインOK）。<b style="color:#ffb27a">既定値は推定（オッズ未公表）</b>—確定したら上書きしてください。</div>
+  </header>
+
+  <section>
+    <div class="controls">
+      <button class="btn primary" id="sortBtn">妙味順に並べ替え ⇅</button>
+      <button class="btn" id="resetBtn">推定値に戻す</button>
+      <span class="stamp" id="stamp"></span>
+    </div>
+    <p class="mut" style="font-size:12.5px;margin:2px 0 6px">想定勝率＝モデル値(雨・荒れG3前提・編集可)。EV = 想定勝率 × 単勝。<b>EV&gt;1.1=妙味 / 0.85未満=過剰人気</b>。ハンデ確定後、軽ハンデ馬の勝率を上げる等の微調整も可。</p>
+    <div style="overflow-x:auto">
+    <table id="tbl">
+      <thead><tr><th class="small">馬</th><th class="small num">想定勝率%</th><th class="small num">単勝</th><th class="small num">EV</th><th class="small">判定</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">▸</span>サマリー（自動更新）</h2>
+    <div class="sumcard"><h4>🟢 妙味TOP（EVが高い）= 相手で厚くしたい馬</h4><div id="topValue"></div></div>
+    <div class="sumcard"><h4>🔴 過剰人気（EVが低い）= 軸頭固定や単勝は避ける馬</h4><div id="overbet"></div></div>
+    <div class="sumcard"><h4>⚖️ 相手の推奨比重</h4><div id="weights"></div>
+      <p class="mut" style="font-size:12px;margin:8px 0 0">厚め=EV1.1以上 / 中=0.95〜1.1 / 軽め=0.8〜0.95 / 消し寄り=0.8未満。<br>※精密な買い目（回収床・3連複の組合せ）の再設計はClaudeに「府中牝馬S 最新オッズで予想を更新して」。</p>
+    </div>
+  </section>
+
+  <footer>オッズ計算機 / 府中牝馬S2026 ｜ <a href="prediction.html">予想へ</a><br>※想定勝率はモデルの目安。最終判断はご自身で。</footer>
+</div>
+
+<script>
+(function(){
+  // 馬名, 既定の想定勝率(%), 推定単勝オッズ（未公表のため推定。確定後に上書き）
+  var BASE = [
+    {name:'コガネノソラ',    p:16,  o:5.5},
+    {name:'ニシノティアモ',  p:12,  o:6.5},
+    {name:'セキトバイースト',p:11,  o:8.0},
+    {name:'ヴァルキリーバース',p:11, o:4.5},
+    {name:'テレサ',          p:8,   o:9.0},
+    {name:'ルージュソリテール',p:8,  o:9.5},
+    {name:'パラディレーヌ',  p:6,   o:14.0},
+    {name:'タガノエルピーダ',p:5,   o:10.5},
+    {name:'ミアネーロ',      p:4,   o:12.0},
+    {name:'ブラウンラチェット',p:3, o:20.0},
+    {name:'ホールネス',      p:3,   o:25.0},
+    {name:'ビップデイジー',  p:2,   o:30.0},
+    {name:'エストゥペンダ',  p:2,   o:40.0},
+    {name:'セントメモリーズ',p:1.5, o:50.0},
+    {name:'ウイントワイライト',p:1.5,o:50.0},
+    {name:'ユキワリザクラ',  p:1,   o:60.0},
+    {name:'テリオスララ',    p:1,   o:80.0},
+    {name:'マカナ',          p:0.5, o:100.0}
+  ];
+  var KEY='fuchu-himba-2026-odds-v1';
+  var state={}, sortByEv=false;
+
+  function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); state=s.data||{}; if(s.t)stamp(s.t);}catch(e){state={};} }
+  function save(){ var t=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify({data:state,t:t})); }catch(e){} stamp(t); }
+  function stamp(t){ var d=new Date(t), z=function(x){return ('0'+x).slice(-2);};
+    document.getElementById('stamp').textContent='最終更新 '+(d.getMonth()+1)+'/'+d.getDate()+' '+z(d.getHours())+':'+z(d.getMinutes()); }
+  function val(h){ var s=state[h.name]||{}; return { p: s.p!=null? s.p : h.p, o: s.o!=null? s.o : h.o }; }
+  function ev(h){ var v=val(h); return (v.p/100)*v.o; }
+  function judge(e){ if(e>=1.10) return {t:'妙味(買い)', c:'t-buy'}; if(e>=1.00) return {t:'やや妙味', c:'t-buy'};
+    if(e>=0.85) return {t:'中', c:'t-mut'}; return {t:'過剰人気', c:'t-red'}; }
+  function weight(e){ if(e>=1.10) return '厚め'; if(e>=0.95) return '中'; if(e>=0.80) return '軽め'; return '消し寄り'; }
+
+  function render(){
+    var rows=BASE.slice(); if(sortByEv) rows.sort(function(a,b){ return ev(b)-ev(a); });
+    var tb=document.getElementById('tbody'); tb.innerHTML='';
+    rows.forEach(function(h){
+      var v=val(h), e=ev(h), j=judge(e);
+      var tr=document.createElement('tr'); tr.className='oddsrow';
+      tr.innerHTML='<td class="small">'+h.name+'</td>'+
+        '<td class="small num"><input inputmode="decimal" data-k="p" data-n="'+h.name+'" value="'+v.p+'"></td>'+
+        '<td class="small num"><input inputmode="decimal" data-k="o" data-n="'+h.name+'" value="'+v.o+'"></td>'+
+        '<td class="small num ev" style="color:'+(e>=1.10?'#7ef0bd':e<0.85?'#ffb27a':'#e8eef5')+'">'+e.toFixed(2)+'</td>'+
+        '<td class="small"><span class="tag '+j.c+'">'+j.t+'</span></td>';
+      tb.appendChild(tr);
+    });
+    bindInputs(); summary();
+  }
+  function bindInputs(){
+    document.querySelectorAll('#tbody input').forEach(function(inp){
+      inp.addEventListener('input', function(){
+        var n=inp.getAttribute('data-n'), k=inp.getAttribute('data-k'), num=parseFloat(inp.value);
+        state[n]=state[n]||{}; state[n][k]= isNaN(num)? null : num; save(); liveUpdate();
+      });
+    });
+  }
+  function liveUpdate(){
+    document.querySelectorAll('#tbody tr').forEach(function(tr){
+      var inp=tr.querySelector('input'); if(!inp)return; var n=inp.getAttribute('data-n');
+      var h=BASE.filter(function(x){return x.name===n;})[0]; var e=ev(h), j=judge(e);
+      var evc=tr.querySelector('.ev'); evc.textContent=e.toFixed(2);
+      evc.style.color=(e>=1.10?'#7ef0bd':e<0.85?'#ffb27a':'#e8eef5');
+      var tag=tr.querySelector('.tag'); tag.className='tag '+j.c; tag.textContent=j.t;
+    });
+    summary();
+  }
+  function summary(){
+    var byEv=BASE.slice().sort(function(a,b){return ev(b)-ev(a);});
+    var top=byEv.filter(function(h){return ev(h)>=1.0;}).slice(0,5);
+    document.getElementById('topValue').innerHTML = top.length? top.map(function(h){
+      return '<span class="pill"><b>'+h.name+'</b> EV '+ev(h).toFixed(2)+'</span>'; }).join('') : '<span class="mut">EV1.0以上の妙味馬なし（実オッズ入力で再判定）</span>';
+    var pop=BASE.slice().sort(function(a,b){return val(a).o-val(b).o;}).slice(0,6);
+    var over=pop.filter(function(h){return ev(h)<0.85;});
+    document.getElementById('overbet').innerHTML = over.length? over.map(function(h){
+      return '<span class="pill"><b>'+h.name+'</b> EV '+ev(h).toFixed(2)+'</span>'; }).join('') : '<span class="mut">人気上位に過剰評価なし</span>';
+    document.getElementById('weights').innerHTML = byEv.map(function(h){
+      var w=weight(ev(h)); var col= w==='厚め'?'#5ee08e': w==='中'?'#e8eef5': w==='軽め'?'#ffd97a':'#ffb27a';
+      return '<span class="pill"><b>'+h.name+'</b> <span style="color:'+col+'">'+w+'</span> ('+ev(h).toFixed(2)+')</span>'; }).join('');
+  }
+
+  document.getElementById('sortBtn').addEventListener('click', function(){ sortByEv=!sortByEv; render(); });
+  document.getElementById('resetBtn').addEventListener('click', function(){ if(confirm('入力を推定既定値に戻しますか？')){ state={}; save(); render(); } });
+  load(); render();
+})();
+</script>
+</body>
+</html>

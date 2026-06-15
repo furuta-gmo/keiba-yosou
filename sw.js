@@ -1,6 +1,6 @@
 /* 競馬予想PWA Service Worker
    バージョンを上げる(=CACHEを変える)と、次回オンライン時に更新が反映されます。 */
-const CACHE = 'keiba-yosou-v11';
+const CACHE = 'keiba-yosou-v12';
 
 const ASSETS = [
   './',
@@ -18,7 +18,16 @@ const ASSETS = [
   './2026-06-14_takarazuka/analysis/2_血統.html',
   './2026-06-14_takarazuka/analysis/3_近走成績.html',
   './2026-06-14_takarazuka/analysis/4_馬場適性.html',
-  './2026-06-14_takarazuka/analysis/5_オッズ分析.html'
+  './2026-06-14_takarazuka/analysis/5_オッズ分析.html',
+  './2026-06-21_fuchu-himba/prediction.html',
+  './2026-06-21_fuchu-himba/research.html',
+  './2026-06-21_fuchu-himba/odds.html',
+  './2026-06-21_fuchu-himba/style.css',
+  './2026-06-21_fuchu-himba/analysis/1_展開予想.html',
+  './2026-06-21_fuchu-himba/analysis/2_血統.html',
+  './2026-06-21_fuchu-himba/analysis/3_近走成績.html',
+  './2026-06-21_fuchu-himba/analysis/4_コース馬場.html',
+  './2026-06-21_fuchu-himba/analysis/5_オッズ分析.html'
 ];
 
 // インストール: アプリシェルを事前キャッシュ
