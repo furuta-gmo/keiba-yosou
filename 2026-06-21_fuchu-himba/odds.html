@@ -46,6 +46,14 @@
       <span class="stamp" id="stamp"></span>
     </div>
     <p class="mut" style="font-size:12.5px;margin:2px 0 6px">想定勝率＝モデル値(雨・荒れG3前提・編集可)。EV = 想定勝率 × 単勝。<b>EV&gt;1.1=妙味 / 0.85未満=過剰人気</b>。ハンデ確定後、軽ハンデ馬の勝率を上げる等の微調整も可。</p>
+
+    <div class="sumcard" style="margin:0 0 12px;border-color:var(--gold)">
+      <h4>📋 netkeiba等のオッズを貼り付けて一括反映</h4>
+      <textarea id="paste" rows="4" style="width:100%;box-sizing:border-box;background:#0b1119;border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:10px;font-size:12px" placeholder="netkeibaやJRA公式アプリの【単勝オッズ表】を全体コピーして、ここに貼り付け → 下の「反映」ボタン"></textarea>
+      <div style="margin-top:8px"><button class="btn primary" id="importBtn">貼り付けたオッズを反映 ↧</button> <span class="stamp" id="importMsg"></span></div>
+      <p class="mut" style="font-size:11.5px;margin:6px 0 0">馬名でマッチして<b>各馬の単勝オッズを自動取得</b>します。順番・書式は問いません（馬名の直後の数字を単勝として読み取り）。<br>※CORS制約で外部サイトから自動取得はできないため「コピペ→反映」方式。リアルタイム自動取得が必要な場合はClaudeに相談を。</p>
+    </div>
+
     <div style="overflow-x:auto">
     <table id="tbl">
       <thead><tr><th class="small">馬</th><th class="small num">想定勝率%</th><th class="small num">単勝</th><th class="small num">EV</th><th class="small">判定</th></tr></thead>
@@ -149,6 +157,23 @@
       return '<span class="pill"><b>'+h.name+'</b> <span style="color:'+col+'">'+w+'</span> ('+ev(h).toFixed(2)+')</span>'; }).join('');
   }
 
+  function importPaste(){
+    var txt=document.getElementById('paste').value||''; var n=0, miss=[];
+    BASE.forEach(function(h){
+      var idx=txt.indexOf(h.name);
+      if(idx>=0){
+        var after=txt.slice(idx+h.name.length);
+        var m=after.match(/(\d{1,4}(?:\.\d+)?)/); // 馬名の直後の最初の数値＝単勝
+        if(m){ var o=parseFloat(m[1]); if(!isNaN(o)&&o>0){ state[h.name]=state[h.name]||{}; state[h.name].o=o; n++; return; } }
+        miss.push(h.name);
+      } else { miss.push(h.name); }
+    });
+    save(); render();
+    var msg=n+'頭のオッズを反映';
+    if(miss.length){ msg+='（未取得: '+miss.length+'頭）'; }
+    document.getElementById('importMsg').textContent=msg;
+  }
+  document.getElementById('importBtn').addEventListener('click', importPaste);
   document.getElementById('sortBtn').addEventListener('click', function(){ sortByEv=!sortByEv; render(); });
   document.getElementById('resetBtn').addEventListener('click', function(){ if(confirm('入力を推定既定値に戻しますか？')){ state={}; save(); render(); } });
   load(); render();
