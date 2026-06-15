@@ -45,7 +45,7 @@
   <section>
     <div class="controls">
       <button class="btn primary" id="sortBtn">妙味順に並べ替え ⇅</button>
-      <button class="btn" id="resetBtn">v5の値に戻す</button>
+      <button class="btn" id="resetBtn">当日朝の値に戻す</button>
       <span class="stamp" id="stamp"></span>
     </div>
     <p class="mut" style="font-size:12.5px;margin:2px 0 6px">想定勝率＝私(Claude)のモデル値。編集も可能。EV = 想定勝率 × 単勝オッズ。<b>EV&gt;1.1=妙味 / 0.85未満=過剰人気</b>。</p>
@@ -88,28 +88,28 @@
 
 <script>
 (function(){
-  // 馬番, 馬名, 既定の想定勝率(%), v5の単勝オッズ
+  // 馬番, 馬名, 既定の想定勝率(%), 当日朝の単勝オッズ
   var BASE = [
-    {n:5,  name:'クロワデュノール',  p:62,  o:1.2,  axis:true},
-    {n:16, name:'メイショウタバル',  p:9,   o:10.0},
-    {n:2,  name:'ミュージアムマイル',p:7,   o:11.9},
-    {n:1,  name:'ダノンデサイル',    p:8,   o:12.5},
-    {n:17, name:'レガレイラ',        p:5,   o:12.0},
-    {n:15, name:'マイユニバース',    p:2.5, o:31.6},
-    {n:6,  name:'ビザンチンドリーム',p:1.5, o:66.1},
-    {n:9,  name:'コスモキュランダ',  p:1.5, o:91.1},
-    {n:4,  name:'ミクニインスパイア',p:1.0, o:107.6},
-    {n:8,  name:'タガノデュード',    p:0.4, o:97.9},
-    {n:13, name:'シェイクユアハート',p:0.3, o:127.9},
-    {n:11, name:'シンエンペラー',    p:0.3, o:145.9},
-    {n:12, name:'マイネルエンペラー',p:0.2, o:189.4},
-    {n:14, name:'スティンガーグラス',p:0.2, o:217.3},
-    {n:10, name:'ジューンテイク',    p:0.1, o:289.0},
-    {n:18, name:'ミステリーウェイ',  p:0.1, o:330.4},
-    {n:3,  name:'シュガークン',      p:0.1, o:372.4},
-    {n:7,  name:'ファミリータイム',  p:0.05,o:476.3}
+    {n:5,  name:'クロワデュノール',  p:60,  o:1.5,  axis:true},
+    {n:16, name:'メイショウタバル',  p:10,  o:7.8},
+    {n:2,  name:'ミュージアムマイル',p:8,   o:8.3},
+    {n:1,  name:'ダノンデサイル',    p:9,   o:9.8},
+    {n:17, name:'レガレイラ',        p:6,   o:9.0},
+    {n:15, name:'マイユニバース',    p:3,   o:23.0},
+    {n:6,  name:'ビザンチンドリーム',p:1.8, o:46.5},
+    {n:9,  name:'コスモキュランダ',  p:1.8, o:59.5},
+    {n:4,  name:'ミクニインスパイア',p:1.2, o:80.7},
+    {n:8,  name:'タガノデュード',    p:0.5, o:65.7},
+    {n:13, name:'シェイクユアハート',p:0.3, o:96.9},
+    {n:11, name:'シンエンペラー',    p:0.3, o:106.6},
+    {n:12, name:'マイネルエンペラー',p:0.2, o:153.7},
+    {n:14, name:'スティンガーグラス',p:0.2, o:160.1},
+    {n:10, name:'ジューンテイク',    p:0.1, o:228.9},
+    {n:18, name:'ミステリーウェイ',  p:0.1, o:255.1},
+    {n:3,  name:'シュガークン',      p:0.1, o:297.5},
+    {n:7,  name:'ファミリータイム',  p:0.05,o:331.7}
   ];
-  var KEY='takarazuka2026-odds-v1';
+  var KEY='takarazuka2026-odds-v2';
   var state={}, sortByEv=false;
 
   function load(){
@@ -213,7 +213,7 @@
 
   document.getElementById('sortBtn').addEventListener('click', function(){ sortByEv=!sortByEv; render(); });
   document.getElementById('resetBtn').addEventListener('click', function(){
-    if(confirm('入力をv5の既定オッズに戻しますか？')){ state={}; save(); render(); }
+    if(confirm('入力を当日朝の既定オッズに戻しますか？')){ state={}; save(); render(); }
   });
 
   load(); render();
