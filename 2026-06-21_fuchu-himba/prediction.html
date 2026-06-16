@@ -145,6 +145,34 @@
     </ol>
   </section>
 
+  <section style="border-color:#2dd4bf">
+    <h2><span class="no">🤖</span>Claudeで更新するテンプレ</h2>
+    <p class="mut">斤量/オッズが出たら：① 下の「コピー」→ ② Claudeアプリ(claude.ai/code)で <b>keiba環境の新チャット</b> → ③ 貼り付けて空欄に最新情報を入れて送信。<b>mainに直接push</b>まで自動でやります。</p>
+    <pre id="tmpl" style="white-space:pre-wrap;background:#0b1119;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:12px;color:#cfe;overflow-x:auto">【更新依頼】府中牝馬S2026（6/21 東京11R 芝1800m 牝馬ハンデ）
+リポジトリ furuta-gmo/keiba-yosou の 2026-06-21_fuchu-himba/ を更新して、mainに直接commit&pushして（sw.jsのCACHEも上げて）。
+
+▼斤量（ハンデ確定）:
+（例）コガネノソラ 57, ニシノティアモ 56.5, ...
+
+▼単勝オッズ（netkeibaの単勝表を貼り付け）:
+（ここに貼り付け）
+
+▼当日の馬場:
+（良/稍重/重。雨予報80%）
+
+方針: 回収率重視・期待値型。◎コガネノソラ軸の暫定v1を斤量×オッズでEV再計算。軽ハンデ妙味/トップハンデ割引を反映し、買い目を100円単位・回収床で確定。</pre>
+    <button id="copyTmpl" style="background:#0e1a26;border:1px solid var(--acc);color:#7ef0bd;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer;margin-top:8px">📋 テンプレをコピー</button>
+    <span id="copyMsg" class="mut" style="margin-left:8px;font-size:12px"></span>
+  </section>
+  <script>
+  document.getElementById('copyTmpl').addEventListener('click',function(){
+    var el=document.getElementById('tmpl'), t=el.innerText, m=document.getElementById('copyMsg');
+    function ok(){ m.textContent='コピーしました ✓'; }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(ok,function(){fallback();}); } else { fallback(); }
+    function fallback(){ try{ var r=document.createRange(); r.selectNode(el); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges(); ok(); }catch(e){ m.textContent='長押しでコピーしてください'; } }
+  });
+  </script>
+
   <footer>
     府中牝馬ステークス2026 予想 v1（暫定）／ 方針: 回収率重視・期待値型<br>
     ※馬券は自己責任。本資料は分析支援であり的中や利益を保証しません。<br>
