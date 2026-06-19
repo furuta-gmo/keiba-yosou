@@ -28,42 +28,42 @@
     <a href="8_データ傾向.html">⑧傾向</a><a href="9_枠順バイアス.html">⑨枠順</a><a href="10_当日.html">⑩当日</a>
   </div>
   <header class="hero">
-    <span class="race-tag">⑤ オッズ・期待値担当</span>
+    <span class="race-tag">⑤ オッズ・期待値担当｜<b style="color:var(--gold)">予想オッズ反映済</b></span>
     <h1>期待値・妙味の分析</h1>
-    <div class="sub">確信度: <b>低〜中</b>（想定オッズ未公表・斤量未確定）</div>
+    <div class="sub">6/19 予想オッズを反映 ／ 確信度: <b>中</b>（当日確定オッズで再計算）</div>
   </header>
   <section class="prose">
-    <div class="warnbox" style="margin-bottom:14px"><b>重要：</b>現時点で各馬の想定オッズ数値を公表するソースは無く（ハンデ戦の宿命）、斤量も未確定。下の想定はU指数＋人気推定＋当方補正の<b>暫定</b>。実オッズが出たら<a href="odds.html">🧮計算機</a>で必ず再計算を。</div>
-    <h3>レース質＝「荒れる」</h3>
-    <p>過去10年、1〜3番人気の信頼度が非常に低く、1〜3着の過半が5番人気以下、2桁人気が3勝。<b>上位人気の勝率は市場の織り込みより低く、中穴の勝率は市場より高い＝期待値は中穴に寄る</b>。</p>
-    <h3>想定人気/オッズ（推定）</h3>
+    <div class="warnbox" style="margin-bottom:14px"><b>EV = 当方想定勝率 × 単勝。</b>道悪・荒れG3・データ反映の想定勝率で算出（編集可モデル）。実オッズが動いたら<a href="odds.html">🧮計算機</a>で再計算を。<b>EV1.1以上=妙味／0.85未満=過剰人気</b>。</div>
+    <h3>EV一覧（馬番順・予想オッズベース）</h3>
     <table>
-      <thead><tr><th>想定人気</th><th>馬</th><th class="num">想定単勝(推定)</th></tr></thead>
+      <thead><tr><th>馬(人気)</th><th class="num">単勝</th><th class="num">想定<br>勝率</th><th class="num">EV</th><th>判定</th></tr></thead>
       <tbody>
-        <tr><td class="num">1</td><td>ヴァルキリーバース(ルメール)</td><td class="num">4〜5</td></tr>
-        <tr><td class="num">2</td><td>コガネノソラ</td><td class="num">5〜6</td></tr>
-        <tr><td class="num">3</td><td>ニシノティアモ</td><td class="num">6〜7</td></tr>
-        <tr><td class="num">4</td><td>セキトバイースト</td><td class="num">7〜9</td></tr>
-        <tr><td class="num">5</td><td>テレサ</td><td class="num">8〜10</td></tr>
-        <tr><td class="num">6</td><td>ルージュソリテール(U指数1位)</td><td class="num">8〜11</td></tr>
-        <tr><td class="num">7</td><td>タガノエルピーダ(U指数2位)</td><td class="num">9〜12</td></tr>
-        <tr><td class="num">9</td><td>パラディレーヌ(U指数3位)</td><td class="num">12〜16</td></tr>
+        <tr><td>セキトバイースト(11)</td><td class="num">23.6</td><td class="num">9%</td><td class="num"><b style="color:#7ef0bd">2.12</b></td><td><span class="tag t-buy">妙味(大)</span></td></tr>
+        <tr><td>コガネノソラ(4)◎</td><td class="num">9.2</td><td class="num">16%</td><td class="num"><b style="color:#7ef0bd">1.47</b></td><td><span class="tag t-buy">妙味</span></td></tr>
+        <tr><td>エストゥペンダ(3)○</td><td class="num">8.4</td><td class="num">14%</td><td class="num"><b style="color:#7ef0bd">1.18</b></td><td><span class="tag t-buy">妙味</span></td></tr>
+        <tr><td>テレサ(8)</td><td class="num">18.0</td><td class="num">6%</td><td class="num">1.08</td><td><span class="tag t-mut">やや妙味</span></td></tr>
+        <tr><td>テリオスララ(10)</td><td class="num">20.1</td><td class="num">5%</td><td class="num">1.01</td><td><span class="tag t-mut">やや妙味</span></td></tr>
+        <tr><td>ルージュ(6)</td><td class="num">12.6</td><td class="num">6%</td><td class="num">0.76</td><td><span class="tag t-mut">中〜割引</span></td></tr>
+        <tr><td>パラディ(5)</td><td class="num">11.4</td><td class="num">7%</td><td class="num">0.80</td><td><span class="tag t-mut">やや過剰</span></td></tr>
+        <tr><td>ニシノティアモ(2)△</td><td class="num">5.4</td><td class="num">10%</td><td class="num"><b style="color:#ffb27a">0.54</b></td><td><span class="tag t-red">過剰人気</span></td></tr>
+        <tr><td>ヴァルキリー(1)☆</td><td class="num">3.1</td><td class="num">10%</td><td class="num"><b style="color:#ffb27a">0.31</b></td><td><span class="tag t-red">過剰人気(強)</span></td></tr>
       </tbody>
     </table>
-    <h3>買い候補（妙味＝中穴）</h3>
+    <h3>買い候補（EV妙味）</h3>
     <ul>
-      <li><strong>パラディレーヌ</strong>— U指数3位なのに想定9番人気。指数と人気の最大のズレ。荒れ質と噛む。EV≈1.1。</li>
-      <li><strong>ルージュソリテール</strong>— U指数1位を中位人気で拾える。EV≈1.05。<b>但し雨だと高速前提が崩れ割引</b>（馬場担当と要すり合わせ）。</li>
-      <li><strong>タガノエルピーダ/ミアネーロ</strong>— 指数上位・軽ハンデ含みの中穴。複勝・ワイドで取りこぼし回収。</li>
+      <li><strong>セキトバイースト(11人気23.6)</strong>— 道悪×先行×調教今年一番。<b>勝率9%想定でもEV2.12＝最大の妙味</b>。高配当の核。</li>
+      <li><strong>コガネノソラ(4人気9.2)◎</strong>— 道悪適性最上位を9.2倍で。EV1.47で軸の妙味も十分。</li>
+      <li><strong>エストゥペンダ(3人気8.4)○</strong>— 前走3勝C勝ち・データ最適・調教A。3人気でもEV1.18で買える。</li>
+      <li><strong>テレサ(8)・テリオスララ(10)</strong>— EV1.0前後。テリオスは調教最上位で穴ヒモに。</li>
     </ul>
     <h3>過剰人気・消し</h3>
     <ul>
-      <li><strong>ヴァルキリーバース</strong>— ルメール人気で4〜5倍はEV1.0割れ濃厚。U指数は上位馬に劣る。軸頭にしない。</li>
-      <li><strong>セキトバ/ニシノ</strong>— 実績/前走重賞勝ちで人気だが、ハンデ加増・舞台替わりで過剰になりやすい（※当方は雨でこの2頭の適性を高評価＝オッズ妙味とは別軸。連系で押さえる）。</li>
+      <li><strong>ヴァルキリーバース(1人気3.1)</strong>— 高速瞬発型で<b>道悪割引＋休み明け</b>。EV0.31＝<b>単勝・軸頭は明確に非推奨</b>。押さえまで。</li>
+      <li><strong>ニシノティアモ(2人気5.4)</strong>— 能力上位だが<b>前走VM組(0-0-3-13)＆距離短縮の二重逆風</b>。EV0.54＝人気ほど買えない。相手まで。</li>
     </ul>
-    <h3>ハンデ戦の狙い方</h3>
-    <p>上位人気1頭軸の単勝・馬単は非推奨。<b>3連複フォーメーション</b>本線（軸＋中穴＋上位人気1〜2頭）＋ワイドで的中率確保。軽量を引いた中穴は上方修正、トップハンデの人気馬は割引。<b>斤量・実オッズ確定後に買い目を確定</b>。</p>
-    <p class="mut" style="margin-top:8px">※⑤オッズ担当は純オッズ妙味（パラディ/ルージュ）を推すが、当方の最終結論は<b>雨想定の馬場適性を優先しコガネを軸</b>に、オッズ妙味の中穴を相手に組み込む形で統合している。</p>
+    <h3>ハンデ・荒れG3の狙い方</h3>
+    <p>市場の1・2人気(ヴァルキリー/ニシノ)を<b>軸頭から外し</b>、コガネ(4人気)軸＋エストゥペンダ(3人気)＋セキトバ(11人気)の<b>妙味トリオ</b>を本線に。3連複・ワイドのフォーメーションで、穴のセキトバ・テリオス絡みを高配当の核に。<b>本命サイドだけの决着なら点数を絞り、回収床を維持</b>。</p>
+    <p class="mut" style="margin-top:8px">※想定勝率は当方モデル（道悪前提）。馬場が良に回復するとヴァルキリー/ルージュ/テレサのEVが上昇＝当日に再評価。</p>
   </section>
   <footer>⑤ オッズ分析 ｜ <a href="../prediction.html">予想へ戻る</a></footer>
 </div>
