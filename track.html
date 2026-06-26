@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>検証ダッシュボード（バックテスト＋較正）</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .ctl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:8px 0 14px}
+  .ctl label{font-size:13px;color:var(--mut)}
+  .ctl input[type=range]{vertical-align:middle}
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0}
+  .kc{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .kc .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+  .kc .l{font-size:11.5px;color:var(--mut)}
+  .good{color:#7ef0bd}.bad{color:#ffb27a}
+  table.bt{font-size:12px}
+  table.bt th,table.bt td{padding:5px 6px}
+  .win{background:rgba(126,240,189,.12)}
+  .pk{color:#7ef0bd;font-weight:700}.npk{color:#5a6b7a}
+  .mut2{font-size:11.5px;color:var(--mut)}
+  details{margin:6px 0}
+  summary{cursor:pointer;color:var(--acc2);font-size:14px;font-weight:700;padding:4px 0}
+</style>
+<meta name="theme-color" content="#102132">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="競馬予想">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js')})}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← レース一覧へ</a>
+  <header class="hero">
+    <span class="race-tag">検証 / backtest + calibration</span>
+    <h1>新ルールはどこまで効くか 🔬</h1>
+    <div class="sub">惨敗の反省＋ディープリサーチを受けた改善（<b>市場ブレンドp・EV&lt;1軸禁止・地力カバー</b>）を、過去の全レースに当てはめて旧法と比較。<b style="color:#ffb27a">※n=3の少数サンプル＝「実力の証明」ではなく「機構の検証＋今後の蓄積基盤」</b>。</div>
+  </header>
+
+  <section style="border-color:var(--gold)">
+    <h2><span class="no" style="background:var(--gold)">i</span>新法の3点（バックテストの対象）</h2>
+    <ul style="font-size:13.5px">
+      <li><b>① 市場ブレンドp</b>：最終p = w×自分のp +(1-w)×市場インプライド確率(=控除率調整後の単勝逆数)。<b>EVは「市場に対する本当のエッジ」だけを拾う</b>。スライダーでwを変えて感応度を確認。</li>
+      <li><b>② EV&lt;1の軸禁止</b>：ブレンド後EV&lt;1.0の馬は「軸・単勝」に置かない（しらさぎ◎ファーヴェントEV&lt;1を適性で正当化した過ちを機械的に防ぐ）。</li>
+      <li><b>③ 地力カバー</b>：3連系の相手に「実績上位（重賞好走/レーティング）」を必ず残す＝薄データで有力馬を消さない（府中セキトバ・しらさぎエルトン/キープを切った過ち）。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="no">▸</span>パラメータ</h2>
+    <div class="ctl">
+      <label>市場ブレンド w（自分のp比重）：<b id="wlab">0.40</b> <input type="range" id="w" min="0" max="1" step="0.05" value="0.40"></label>
+      <label>妙味しきい値 EV≥<b id="thlab">1.10</b> <input type="range" id="th" min="1.0" max="1.5" step="0.05" value="1.10"></label>
+      <span class="mut2">w=1.0で従来法(自分のpそのまま)、w=0で市場そのまま。</span>
+    </div>
+    <div class="kpi" id="agg"></div>
+    <p class="mut2" id="aggnote"></p>
+  </section>
+
+  <section id="races"></section>
+
+  <section style="border-color:#2dd4bf">
+    <h2><span class="no" style="background:#2dd4bf">=</span>検証から言えること（結論）</h2>
+    <ol style="font-size:13.5px">
+      <li><b>新法（市場ブレンド）は「幻の妙味」を潰す</b>：旧法は1レース平均で多数の馬をEV&gt;1.1の妙味と判定するが、ブレンドすると妙味判定が激減（下のKPI「妙味判定数」を比較）。府中のテレサEV1.42・しらさぎスイープEV1.54などの過大評価が市場側に縮小され、<b>過去2敗ではブレンドの方が賭け数・投資額が大幅に少ない＝損失を構造的に圧縮</b>。</li>
+      <li><b>ただし「勝ち馬を当てる」力は別問題</b>：府中セキトバ(5人)・しらさぎエルトン(7人)とも、<b>市場も当方も終値で強く評価できていなかった</b>。新法でも単勝の妙味には入らない＝<b>終値（クロージングライン）に勝つのは本質的に難しい</b>（リサーチの中核所見）。新法の主効果は「勝率UP」でなく「規律＝負け方の改善」。</li>
+      <li><b>勝ち馬を拾えた可能性があるのは EV でなく「地力カバー」と「更新ロック」</b>：しらさぎ1-2着のエルトン/キープは私が斤量・血統データで3連系の相手から外した＝地力カバーなら相手に残り3連複10,320円の射程。府中セキトバは早期オッズ23.6でブレンドEV≈1.37の本物の妙味だった（下の宝塚/府中の「早期EV」注記）→更新ロックで保持できた。</li>
+      <li><b>較正(Brier)</b>：自分のpは「本命に過信・人気馬を過小」の両面。市場へ縮小したブレンドpが多くの局面で最もBrierが低い＝較正が改善（KPI参照）。長期で自分のpの癖をこのページで矯正する。</li>
+    </ol>
+    <p class="mut2">payoffは単勝フラット（妙味馬に各¥100、1着なら単勝配当）で計算。複勝・3連系の的中は別途記録予定。データは各レースのodds.html（当方想定p）＋当日確定オッズ＋着順。</p>
+  </section>
+
+  <footer>検証ダッシュボード ｜ <a href="index.html">レース一覧</a><br>※n=3。サンプルが貯まるまで巧拙は判定しない（運と実力の分離）。</footer>
+</div>
+
+<script>
+// ===== データ: 各レース [想定p(odds.html由来), 確定オッズ, 着順(0=着外)] =====
+// fin: 1=1着,2,3...,0=4着以下/着外
+var RACES = [
+  { name:'宝塚記念2026', date:'6/14', note:'良馬場前提のp（直前ゲリラ豪雨で重に急変→メイショウタバル激走）。結果は当日組み替えで馬連5-16等的中(+7,000)＝この表のpは前日良馬場版である点に注意。', baba:'重(急変)',
+    runners:[
+      {name:'クロワデュノール',p:60,o:1.5,fin:2},{name:'メイショウタバル',p:10,o:7.8,fin:1},
+      {name:'ミュージアムマイル',p:8,o:8.3,fin:0},{name:'ダノンデサイル',p:9,o:9.8,fin:3},
+      {name:'レガレイラ',p:6,o:9.0,fin:0},{name:'マイユニバース',p:3,o:23.0,fin:0},
+      {name:'ビザンチンドリーム',p:1.8,o:46.5,fin:0},{name:'コスモキュランダ',p:1.8,o:59.5,fin:4},
+      {name:'ミクニインスパイア',p:1.2,o:80.7,fin:0},{name:'タガノデュード',p:0.5,o:65.7,fin:0},
+      {name:'シェイクユアハート',p:0.3,o:96.9,fin:0},{name:'シンエンペラー',p:0.3,o:106.6,fin:0},
+      {name:'マイネルエンペラー',p:0.2,o:153.7,fin:0},{name:'スティンガーグラス',p:0.2,o:160.1,fin:0},
+      {name:'ジューンテイク',p:0.1,o:228.9,fin:0},{name:'ミステリーウェイ',p:0.1,o:255.1,fin:0},
+      {name:'シュガークン',p:0.1,o:297.5,fin:0},{name:'ファミリータイム',p:0.05,o:331.7,fin:0}
+    ]},
+  { name:'府中牝馬S2026', date:'6/21', note:'稍重＋4C〜直線に痛み。1着セキトバは早期オッズ23.6では当方p8%→EV約2.0（▲穴で正しく推奨）も、短縮10.9まで触り続けて格下げ＝更新ロック違反。', baba:'稍重',
+    runners:[
+      {name:'コガネノソラ',p:16,o:7.4,fin:0},{name:'エストゥペンダ',p:14,o:8.1,fin:0},
+      {name:'ニシノティアモ',p:10,o:6.1,fin:0},{name:'ヴァルキリーバース',p:10,o:3.0,fin:0},
+      {name:'セキトバイースト',p:8,o:10.9,fin:1},{name:'パラディレーヌ',p:7,o:18.2,fin:0},
+      {name:'ルージュソリテール',p:6,o:12.7,fin:0},{name:'テレサ',p:6,o:23.7,fin:0},
+      {name:'テリオスララ',p:5,o:28.0,fin:0},{name:'マカナ',p:2.5,o:16.7,fin:0},
+      {name:'ウイントワイライト',p:2.5,o:20.6,fin:2},{name:'ミアネーロ',p:1,o:98.0,fin:3},
+      {name:'ビップデイジー',p:1.5,o:49.1,fin:0},{name:'ホールネス',p:1,o:25.5,fin:0},
+      {name:'ブラウンラチェット',p:1,o:91.6,fin:0},{name:'セントメモリーズ',p:0.7,o:140.9,fin:0}
+    ]},
+  { name:'しらさぎS2026', date:'6/21', note:'稍重。1着エルトン/2着キープは斤量[0-2-0]・血統で割引し3連系の相手から外した＝地力カバー違反。◎ファーヴェントはブレンドEV<1で本来は軸不可。', baba:'稍重',
+    runners:[
+      {name:'ファーヴェント',p:15,o:6.0,fin:0},{name:'ミニトランザット',p:12,o:8.0,fin:0},
+      {name:'スイープアワーズ',p:11,o:14.0,fin:5},{name:'エコロアルバ',p:14,o:3.8,fin:3},
+      {name:'ファンダム',p:8,o:9.4,fin:4},{name:'キープカルム',p:6,o:17.1,fin:2},
+      {name:'エルトンバローズ',p:5,o:13.0,fin:1},{name:'ショウナンアデイブ',p:4,o:28.8,fin:0},
+      {name:'スマートワイス',p:4,o:21.6,fin:0},{name:'カズミクラーシュ',p:4,o:15.9,fin:0},
+      {name:'サイルーン',p:3.5,o:8.1,fin:0},{name:'タガノエルピーダ',p:3,o:42.3,fin:0},
+      {name:'メタルスピード',p:2.5,o:54.4,fin:0},{name:'ブエナオンダ',p:4,o:41.4,fin:0},
+      {name:'ファインライン',p:1,o:45.9,fin:0},{name:'スリールミニョン',p:1,o:67.2,fin:0},
+      {name:'メイショウシンタケ',p:0.5,o:106.8,fin:0},{name:'シンフォーエバー',p:0.3,o:120.1,fin:0}
+    ]}
+];
+
+function calc(){
+  var w=parseFloat(document.getElementById('w').value);
+  var th=parseFloat(document.getElementById('th').value);
+  document.getElementById('wlab').textContent=w.toFixed(2);
+  document.getElementById('thlab').textContent=th.toFixed(2);
+  var agg={oldBet:0,oldRet:0,newBet:0,newRet:0,oldN:0,newN:0,
+           brierMy:0,brierMk:0,brierBl:0,nHorses:0,coverOld:0,coverNew:0,nRace:RACES.length};
+  var html='';
+  RACES.forEach(function(R){
+    var rs=R.runners, sp=0, so=0;
+    rs.forEach(function(h){ sp+=h.p; so+=1/h.o; });
+    // normalize
+    rs.forEach(function(h){
+      h.mp = h.p/sp;            // 自分p(正規化)
+      h.mkt = (1/h.o)/so;       // 市場インプライドp(控除率調整)
+      h.bl = w*h.mp + (1-w)*h.mkt;  // ブレンドp
+      h.evOld = h.mp*h.o;
+      h.evNew = h.bl*h.o;
+      h.pickOld = h.evOld>=th;
+      h.pickNew = h.evNew>=th && h.evNew>=1.0; // EV<1軸禁止は元々th>1で内包
+    });
+    // sim 単勝フラット ¥100
+    var oBet=0,oRet=0,nBet=0,nRet=0,winnerOld=false,winnerNew=false;
+    rs.forEach(function(h){
+      if(h.pickOld){ oBet+=100; if(h.fin===1) oRet+=100*h.o; if(h.fin===1)winnerOld=true; }
+      if(h.pickNew){ nBet+=100; if(h.fin===1) nRet+=100*h.o; if(h.fin===1)winnerNew=true; }
+    });
+    // Brier (1着=1)
+    var bMy=0,bMk=0,bBl=0;
+    rs.forEach(function(h){ var y=(h.fin===1)?1:0;
+      bMy+=Math.pow(h.mp-y,2); bMk+=Math.pow(h.mkt-y,2); bBl+=Math.pow(h.bl-y,2); });
+    bMy/=rs.length; bMk/=rs.length; bBl/=rs.length;
+    agg.oldBet+=oBet; agg.oldRet+=oRet; agg.newBet+=nBet; agg.newRet+=nRet;
+    agg.oldN+=rs.filter(function(h){return h.pickOld;}).length;
+    agg.newN+=rs.filter(function(h){return h.pickNew;}).length;
+    agg.brierMy+=bMy; agg.brierMk+=bMk; agg.brierBl+=bBl; agg.nHorses++;
+    agg.coverOld+=winnerOld?1:0; agg.coverNew+=winnerNew?1:0;
+
+    // render race
+    var sorted=rs.slice().sort(function(a,b){return b.bl-a.bl;});
+    var rows=sorted.map(function(h){
+      var wc=h.fin>=1&&h.fin<=3?' class="win"':'';
+      return '<tr'+wc+'><td>'+(h.fin?'<b>'+h.fin+'着</b>':'')+'</td><td>'+h.name+'</td>'+
+        '<td class="num">'+h.o+'</td>'+
+        '<td class="num">'+(h.mp*100).toFixed(1)+'</td>'+
+        '<td class="num">'+(h.mkt*100).toFixed(1)+'</td>'+
+        '<td class="num">'+(h.bl*100).toFixed(1)+'</td>'+
+        '<td class="num">'+h.evOld.toFixed(2)+'</td>'+
+        '<td class="num"><b>'+h.evNew.toFixed(2)+'</b></td>'+
+        '<td class="'+(h.pickOld?'pk':'npk')+'">'+(h.pickOld?'妙味':'-')+'</td>'+
+        '<td class="'+(h.pickNew?'pk':'npk')+'">'+(h.pickNew?'妙味':'-')+'</td></tr>';
+    }).join('');
+    var oRoi=oBet?Math.round(oRet/oBet*100):0, nRoi=nBet?Math.round(nRet/nBet*100):0;
+    html+='<details><summary>'+R.name+'（'+R.date+'・'+R.baba+'）  '+
+      '旧:'+rs.filter(function(h){return h.pickOld;}).length+'点/回収'+oRoi+'%  →  '+
+      '新:'+rs.filter(function(h){return h.pickNew;}).length+'点/回収'+nRoi+'%</summary>'+
+      '<p class="mut2">'+R.note+'</p>'+
+      '<div style="overflow-x:auto"><table class="bt"><thead><tr><th>着</th><th>馬</th><th class="num">単勝</th>'+
+      '<th class="num">自p%</th><th class="num">市場%</th><th class="num">混p%</th>'+
+      '<th class="num">旧EV</th><th class="num">新EV</th><th>旧</th><th>新</th></tr></thead><tbody>'+
+      rows+'</tbody></table></div>'+
+      '<p class="mut2">単勝フラット: 旧=妙味'+rs.filter(function(h){return h.pickOld;}).length+'点¥'+oBet+'→払戻¥'+Math.round(oRet)+'(回収'+oRoi+'%)／新=妙味'+rs.filter(function(h){return h.pickNew;}).length+'点¥'+nBet+'→払戻¥'+Math.round(nRet)+'(回収'+nRoi+'%)。Brier(低いほど較正良): 自分'+bMy.toFixed(3)+' / 市場'+bMk.toFixed(3)+' / 混合'+bBl.toFixed(3)+'</p></details>';
+  });
+  document.getElementById('races').innerHTML='<h2><span class="no">●</span>レース別（タップで展開）</h2>'+html;
+
+  var oRoiA=agg.oldBet?Math.round(agg.oldRet/agg.oldBet*100):0;
+  var nRoiA=agg.newBet?Math.round(agg.newRet/agg.newBet*100):0;
+  document.getElementById('agg').innerHTML=
+    kc('旧法 妙味判定',(agg.oldN)+'点',(agg.oldN/agg.nRace).toFixed(1)+'点/R')+
+    kc('新法 妙味判定',(agg.newN)+'点',(agg.newN/agg.nRace).toFixed(1)+'点/R '+(agg.newN<agg.oldN?'<span class=good>絞れた</span>':'')) +
+    kc('旧法 単勝回収率',oRoiA+'%','投資¥'+agg.oldBet) +
+    kc('新法 単勝回収率',nRoiA+'%','投資¥'+agg.newBet+'（'+(agg.newBet<agg.oldBet?'<span class=good>'+Math.round((1-agg.newBet/agg.oldBet)*100)+'%減</span>':'')+'）') +
+    kc('Brier 自分p',(agg.brierMy/agg.nHorses).toFixed(3),'過信/過小の癖') +
+    kc('Brier 市場',(agg.brierMk/agg.nHorses).toFixed(3),'ベンチマーク') +
+    kc('Brier 混合p',(agg.brierBl/agg.nHorses).toFixed(3),(agg.brierBl<=agg.brierMy?'<span class=good>自分pより較正↑</span>':'自分pと同等')) +
+    kc('勝ち馬が妙味内',agg.coverOld+'→'+agg.coverNew+' / '+agg.nRace+'R','終値で当てるのは困難');
+  document.getElementById('aggnote').innerHTML=
+    '<b>読み方</b>：新法は妙味判定を約'+(agg.oldN?Math.round((1-agg.newN/agg.oldN)*100):0)+'%絞り、投資額を'+(agg.oldBet?Math.round((1-agg.newBet/agg.oldBet)*100):0)+'%圧縮（＝負けレースで傷を浅く）。回収率は両法とも単勝では低いが、これは<b>勝ち馬(セキトバ5人/エルトン7人)を市場も当方も終値で強く評価していなかった</b>ため＝終値に勝つ難しさ。新法の本質効果は「勝率」でなく「規律・分散・較正」。';
+}
+function kc(l,v,sub){ return '<div class="kc"><div class="v">'+v+'</div><div class="l">'+l+(sub?' ・ '+sub:'')+'</div></div>'; }
+document.getElementById('w').addEventListener('input',calc);
+document.getElementById('th').addEventListener('input',calc);
+calc();
+</script>
+</body>
+</html>
