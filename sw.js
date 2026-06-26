@@ -1,6 +1,6 @@
 /* 競馬予想PWA Service Worker
    バージョンを上げる(=CACHEを変える)と、次回オンライン時に更新が反映されます。 */
-const CACHE = 'keiba-yosou-v42';
+const CACHE = 'keiba-yosou-v43';
 
 const ASSETS = [
   './',
@@ -50,7 +50,35 @@ const ASSETS = [
   './2026-06-21_shirasagi/analysis/7_指数.html',
   './2026-06-21_shirasagi/analysis/8_データ傾向.html',
   './2026-06-21_shirasagi/analysis/9_枠順バイアス.html',
-  './2026-06-21_shirasagi/analysis/10_当日.html'
+  './2026-06-21_shirasagi/analysis/10_当日.html',
+  './2026-06-28_hakodate-kinen/prediction.html',
+  './2026-06-28_hakodate-kinen/research.html',
+  './2026-06-28_hakodate-kinen/odds.html',
+  './2026-06-28_hakodate-kinen/style.css',
+  './2026-06-28_hakodate-kinen/analysis/1_展開予想.html',
+  './2026-06-28_hakodate-kinen/analysis/2_血統.html',
+  './2026-06-28_hakodate-kinen/analysis/3_近走成績.html',
+  './2026-06-28_hakodate-kinen/analysis/4_コース馬場.html',
+  './2026-06-28_hakodate-kinen/analysis/5_オッズ分析.html',
+  './2026-06-28_hakodate-kinen/analysis/6_調教.html',
+  './2026-06-28_hakodate-kinen/analysis/7_指数.html',
+  './2026-06-28_hakodate-kinen/analysis/8_データ傾向.html',
+  './2026-06-28_hakodate-kinen/analysis/9_枠順バイアス.html',
+  './2026-06-28_hakodate-kinen/analysis/10_当日.html',
+  './2026-06-28_radio-nikkei/prediction.html',
+  './2026-06-28_radio-nikkei/research.html',
+  './2026-06-28_radio-nikkei/odds.html',
+  './2026-06-28_radio-nikkei/style.css',
+  './2026-06-28_radio-nikkei/analysis/1_展開予想.html',
+  './2026-06-28_radio-nikkei/analysis/2_血統.html',
+  './2026-06-28_radio-nikkei/analysis/3_近走成績.html',
+  './2026-06-28_radio-nikkei/analysis/4_コース馬場.html',
+  './2026-06-28_radio-nikkei/analysis/5_オッズ分析.html',
+  './2026-06-28_radio-nikkei/analysis/6_調教.html',
+  './2026-06-28_radio-nikkei/analysis/7_指数.html',
+  './2026-06-28_radio-nikkei/analysis/8_データ傾向.html',
+  './2026-06-28_radio-nikkei/analysis/9_枠順バイアス.html',
+  './2026-06-28_radio-nikkei/analysis/10_当日.html'
 ];
 
 // インストール: アプリシェルを事前キャッシュ
