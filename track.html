@@ -36,7 +36,7 @@
   <header class="hero">
     <span class="race-tag">検証 / backtest + calibration</span>
     <h1>新ルールはどこまで効くか 🔬</h1>
-    <div class="sub">惨敗の反省＋ディープリサーチを受けた改善（<b>市場ブレンドp・EV&lt;1軸禁止・地力カバー</b>）を、過去の全レースに当てはめて旧法と比較。<b style="color:#ffb27a">※n=3の少数サンプル＝「実力の証明」ではなく「機構の検証＋今後の蓄積基盤」</b>。</div>
+    <div class="sub">惨敗の反省＋ディープリサーチを受けた改善（<b>市場ブレンドp・EV&lt;1軸禁止・地力カバー</b>）を検証。<b>自己予想3レース</b>（旧法vs新法のバックテスト）＋<b>2026年JRA G1全12レース</b>（市場較正の検証）。<b style="color:#ffb27a">※当方pが市場に勝てるかは前向きの記録が必要＝このページに予想を貯めて検証する。</b></div>
   </header>
 
   <section style="border-color:var(--gold)">
@@ -61,6 +61,8 @@
 
   <section id="races"></section>
 
+  <section id="g1cal" style="border-color:var(--acc2)"></section>
+
   <section style="border-color:#2dd4bf">
     <h2><span class="no" style="background:#2dd4bf">=</span>検証から言えること（結論）</h2>
     <ol style="font-size:13.5px">
@@ -68,6 +70,8 @@
       <li><b>ただし「勝ち馬を当てる」力は別問題</b>：府中セキトバ(5人)・しらさぎエルトン(7人)とも、<b>市場も当方も終値で強く評価できていなかった</b>。新法でも単勝の妙味には入らない＝<b>終値（クロージングライン）に勝つのは本質的に難しい</b>（リサーチの中核所見）。新法の主効果は「勝率UP」でなく「規律＝負け方の改善」。</li>
       <li><b>勝ち馬を拾えた可能性があるのは EV でなく「地力カバー」と「更新ロック」</b>：しらさぎ1-2着のエルトン/キープは私が斤量・血統データで3連系の相手から外した＝地力カバーなら相手に残り3連複10,320円の射程。府中セキトバは早期オッズ23.6でブレンドEV≈1.37の本物の妙味だった（下の宝塚/府中の「早期EV」注記）→更新ロックで保持できた。</li>
       <li><b>較正(Brier)</b>：自分のpは「本命に過信・人気馬を過小」の両面。市場へ縮小したブレンドpが多くの局面で最もBrierが低い＝較正が改善（KPI参照）。長期で自分のpの癖をこのページで矯正する。</li>
+      <li><b>2026 G1×12が裏付けたこと（下のG1セクション）</b>：この期は<b>1番人気が勝率58%・複勝75%と異常に強かった</b>。＝当方が府中ヴァル・しらさぎエコロで繰り返した「1番人気を軸頭にしない」は<b>系統的に逆効果</b>で、<b>新法の「市場へ縮小＝人気馬を不当に切らない」が正しい方向</b>だった。穴は"勝つ"より"3列目で絡む"（2-3着に人気薄頻出）＝地力カバー＋手広い3連系を裏付け。<b>ただし「人気を買えば儲かる」ではない</b>（小標本の偏り。長期は控除率でマイナスが定説）。</li>
+      <li><b>最重要の限界</b>：外部G1で検証できるのは「市場が良いベンチマークか」までで、<b>「当方の8視点pが市場に上乗せのエッジを持つか」は、これから予想を前向きに記録(forward-test)して初めて分かる</b>。n=3の自己予想では運と実力を分離できない＝<b>毎レース、確定オッズ・着順・自分のpをこのページに足していくのが精度向上の本筋</b>。</li>
     </ol>
     <p class="mut2">payoffは単勝フラット（妙味馬に各¥100、1着なら単勝配当）で計算。複勝・3連系の的中は別途記録予定。データは各レースのodds.html（当方想定p）＋当日確定オッズ＋着順。</p>
   </section>
@@ -199,6 +203,62 @@ function kc(l,v,sub){ return '<div class="kc"><div class="v">'+v+'</div><div cla
 document.getElementById('w').addEventListener('input',calc);
 document.getElementById('th').addEventListener('input',calc);
 calc();
+
+// ===== 2026 JRA G1 市場較正検証 (n=12) =====
+// favFin=1番人気の着順(99=圏外/未確認), winPop=勝ち馬人気, winTan=単勝配当(null=未確認), san=3連単
+var G1=[
+ {nm:'フェブラリーS',d:'2/22',b:'良',n:16,favFin:4, winPop:2,winTan:340, p:[2,7,5], san:5080},
+ {nm:'高松宮記念',  d:'3/29',b:'良',n:18,favFin:1, winPop:1,winTan:null,p:[1,15,7],san:245730},
+ {nm:'大阪杯',      d:'4/5', b:'良',n:15,favFin:1, winPop:1,winTan:160, p:[1,3,2], san:5240},
+ {nm:'桜花賞',      d:'4/12',b:'良',n:18,favFin:1, winPop:1,winTan:290, p:[1,5,12],san:82710},
+ {nm:'皐月賞',      d:'4/19',b:'良',n:18,favFin:99,winPop:4,winTan:400, p:[4,4,9], san:40110},
+ {nm:'天皇賞(春)',  d:'5/3', b:'良',n:15,favFin:1, winPop:1,winTan:180, p:[1,12,2],san:70630},
+ {nm:'NHKマイルC',  d:'5/10',b:'良',n:18,favFin:1, winPop:1,winTan:460, p:[1,4,6], san:26150},
+ {nm:'ヴィクトリアM',d:'5/17',b:'良',n:18,favFin:1, winPop:1,winTan:190, p:[1,2,3], san:3670},
+ {nm:'オークス',    d:'5/24',b:'良',n:18,favFin:12,winPop:5,winTan:1090,p:[5,3,2], san:30330},
+ {nm:'日本ダービー',d:'5/31',b:'良',n:18,favFin:1, winPop:1,winTan:270, p:[1,9,9], san:47050},
+ {nm:'安田記念',    d:'6/7', b:'良',n:17,favFin:2, winPop:8,winTan:2160,p:[8,1,14],san:84350},
+ {nm:'宝塚記念',    d:'6/14',b:'重',n:16,favFin:2, winPop:2,winTan:390, p:[2,1,3], san:6040}
+];
+(function(){
+ var N=G1.length;
+ var favWin=G1.filter(function(g){return g.favFin===1;}).length;
+ var favPlace=G1.filter(function(g){return g.favFin<=3;}).length;
+ // 1番人気単勝回収率(配当が取れ、1番人気の着順が判明している race のみ)
+ var betRaces=G1.filter(function(g){return g.favFin!==99 && (g.favFin!==1 || g.winTan!=null);});
+ var inv=betRaces.length*100, ret=0;
+ betRaces.forEach(function(g){ if(g.favFin===1 && g.winTan!=null) ret+=g.winTan; });
+ var favRoi=Math.round(ret/inv*100);
+ // 勝ち馬人気の平均, 3連単 中央値
+ var wp=G1.map(function(g){return g.winPop;}).sort(function(a,b){return a-b;});
+ var avgWinPop=(wp.reduce(function(a,b){return a+b;},0)/N).toFixed(1);
+ var sans=G1.map(function(g){return g.san;}).sort(function(a,b){return a-b;});
+ var medSan=sans[Math.floor(N/2)];
+ var rows=G1.map(function(g){
+   var fc=g.favFin===1?'good':(g.favFin<=3?'':'bad');
+   var ff=g.favFin===99?'圏外':g.favFin+'着';
+   return '<tr><td>'+g.nm+'</td><td class="mut2">'+g.d+'/'+g.b+'/'+g.n+'頭</td>'+
+     '<td>'+g.winPop+'人</td><td class="num">'+(g.winTan!=null?g.winTan:'—')+'</td>'+
+     '<td class="num">'+g.san.toLocaleString()+'</td>'+
+     '<td class="'+fc+'">'+ff+'</td></tr>';
+ }).join('');
+ var html='<h2><span class="no" style="background:var(--acc2)">G1</span>市場較正の検証：2026年JRA G1全12レース</h2>'+
+  '<p class="mut2">外部G1には当方の事前pが無いため検証できるのは<b>「市場（人気）が良いベンチマークか」</b>＝新法の土台部分。当方pが市場に勝てるかは別途フォワードテスト（このページに予想を貯める）が必要。<b style="color:#ffb27a">※2026年結果はWeb収集・一部配当未確認/小標本(n=12)。長期の定説と乖離する点は標本の偏りとして解釈。</b></p>'+
+  '<div class="kpi">'+
+   kc('1番人気 勝率',Math.round(favWin/N*100)+'%',favWin+'/'+N+'勝 <span class=bad>(長期~32%を大きく上回る)</span>')+
+   kc('1番人気 複勝率',Math.round(favPlace/N*100)+'%',favPlace+'/'+N+' <span class=good>(高信頼)</span>')+
+   kc('1番人気 単勝回収率',favRoi+'%','n='+betRaces.length+' <span class=bad>(この期は+だが小標本)</span>')+
+   kc('勝ち馬の平均人気',avgWinPop+'人','穴勝ちは少',' ')+
+   kc('3連単 中央値',medSan.toLocaleString()+'円','最小3,670〜最大245,730')+
+  '</div>'+
+  '<div style="overflow-x:auto"><table class="bt"><thead><tr><th>レース</th><th>条件</th><th>勝馬人気</th><th class="num">単勝</th><th class="num">3連単</th><th>1人気着順</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+  '<p class="mut2" style="margin-top:8px"><b>この12戦が新法に与える示唆：</b><br>'+
+  '① <b>2026G1は1番人気が異常に強い（勝率58%・複勝75%）</b>＝この期に「1番人気を軸頭にしない」を貫いたのは系統的に逆効果。<b>新法の「市場へ縮小(blend)」＝人気馬を尊重</b>する方向が正しかった（府中ヴァル・しらさぎエコロを切った過ちと整合）。<br>'+
+  '② <b>穴が"勝つ"ことは稀</b>（勝ち馬の平均人気'+avgWinPop+'人、12戦中9戦で3人気以内が勝利）。一方<b>2-3着には人気薄が頻出</b>（高松宮2着15人/天皇春2着12人/桜花3着12人）＝穴は「勝ち」でなく「3列目」で拾うのが理に適う＝<b>地力カバー＋手広い3連系</b>を裏付け。<br>'+
+  '③ <b>3連単の分散が極端</b>（最小3,670〜最大245,730、1番人気が勝っても15人気2着で24万）＝<b>1点勝負でなく複数軸・分散</b>が必須。チャラ決着(VM3,670)では妙味ゼロ＝人気薄が絡む時だけ妙味。<br>'+
+  '④ ただし<b>「1番人気単勝が+回収」は長期の定説（控除率20%でマイナス）に反する＝この12戦の偏り/小標本</b>。これを「人気を買えば勝てる」と一般化してはいけない（リサーチの中核：単純戦略は長期マイナス）。新法の含意は「人気馬を不当に切るな（blendで尊重）」までで、「人気馬を買え」ではない。</p>';
+ document.getElementById('g1cal').innerHTML=html;
+})();
 </script>
 </body>
 </html>
