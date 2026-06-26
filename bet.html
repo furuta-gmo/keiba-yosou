@@ -51,11 +51,14 @@
       <label>市場ブレンドw（自分p比重）<b id="wl">0.40</b><input type="range" id="w" min="0" max="1" step="0.05" value="0.40"></label>
       <label>Kelly掛け率λ（半分推奨）<b id="ll">0.50</b><input type="range" id="lam" min="0.1" max="1" step="0.05" value="0.50"></label>
       <label>勝負EVしきい値 ≥<b id="el">1.25</b><input type="range" id="ev" min="1.05" max="1.6" step="0.05" value="1.25"></label>
+      <label>回収枠 1レース上限¥<input id="recap" inputmode="numeric" value="5000"></label>
+      <label>回収枠 月上限¥<input id="recmo" inputmode="numeric" value="30000"></label>
     </div>
-    <p class="mut2">w=1で従来法(自分pそのまま)・w=0で市場のみ。λ=0.5でhalf-Kelly(破産回避)。EVしきい値が「勝負」と認める下限＝高いほど厳選＝見送りが増える。</p>
+    <p class="mut2">w=1で従来法(自分pそのまま)・w=0で市場のみ。λ=0.5でhalf-Kelly(破産回避)。EVしきい値が「勝負」と認める下限＝高いほど厳選＝見送りが増える。<b>回収枠</b>＝見送りレースで薄く張る娯楽/練習/データ枠（赤字前提・勝負枠とは別勘定）。</p>
   </section>
 
   <div id="verdict"></div>
+  <div id="recover"></div>
 
   <section>
     <h2><span class="no">①</span>出走馬（自分p％・単勝オッズ）</h2>
@@ -107,7 +110,7 @@ function render(){
   var sp=0, so=0;
   rows.forEach(function(r){ sp+=num(r.p); if(num(r.o)>0) so+=1/num(r.o); });
   var tb=document.getElementById('tb'); tb.innerHTML='';
-  var best={edge:-9,ev:0,name:'',marketTop:0}, totalStake=0, results=[];
+  var best={edge:-9,ev:0,name:'',marketTop:0}, totalStake=0, picks=[];
   rows.forEach(function(r,i){
     var o=num(r.o), selfP=(sp>0?num(r.p)/sp:0), mkt=(o>0&&so>0?(1/o)/so:0);
     var bl=w*selfP+(1-w)*mkt;
@@ -117,7 +120,7 @@ function render(){
     if(ev>evth && stake>0) totalStake+=stake;
     if(mkt>best.marketTop) best.marketTop=mkt;
     if(ev>best.ev){ best.ev=ev; best.edge=edge; best.name=r.n||('馬'+(i+1)); }
-    results.push({ev:ev,edge:edge});
+    picks.push({name:r.n||('馬'+(i+1)), bl:bl, mkt:mkt, o:o, ev:ev});
     var tr=document.createElement('tr');
     tr.innerHTML='<td><input data-i="'+i+'" data-k="n" value="'+(r.n||'')+'" style="width:90px;text-align:left"></td>'+
       '<td class="num"><input data-i="'+i+'" data-k="p" inputmode="decimal" value="'+(r.p||'')+'"></td>'+
@@ -138,8 +141,33 @@ function render(){
   v.innerHTML = isGo
     ? '<div class="big" style="color:#7ef0bd">🔥 勝負レース</div><div class="sm">最大EV <b>'+best.ev.toFixed(2)+'</b>（'+best.name+'・エッジ'+(best.edge>0?'+':'')+best.edge.toFixed(1)+'pp）／ 1番人気の市場確率 '+(best.marketTop*100).toFixed(0)+'%＝'+openness+'<br>推奨 単勝換算ベット合計 <b class="stake">'+yen(totalStake)+'</b>（資金の'+(bank>0?(totalStake/bank*100).toFixed(1):0)+'%'+(totalStake>bank*0.2?' <span class="warn">⚠20%超＝張りすぎ注意</span>':'')+'）</div>'
     : '<div class="big" style="color:#ffb27a">⏸ 見送り推奨</div><div class="sm">最大EV '+(best.ev?best.ev.toFixed(2):'-')+' ＜ しきい値 '+evth.toFixed(2)+'＝市場に対する明確なエッジが無い。'+(openness?'（'+openness+'）':'')+'<br><b>大妙味が立っていない＝賭けない判断が正しい</b>（年数回に集中）</div>';
-  document.getElementById('sumnote').textContent = isGo? ('単勝換算の推奨合計 '+yen(totalStake)+'。実際は馬連/3連複に振り分け＝跳ねを取る。') : '見送り。次のレースへ。';
+  document.getElementById('sumnote').textContent = isGo? ('単勝換算の推奨合計 '+yen(totalStake)+'。実際は馬連/3連複に振り分け＝跳ねを取る。') : '見送り。回収枠で薄く張るなら下の回収モードへ。';
+  renderRecover(picks, isGo, num(document.getElementById('recap').value));
   renderClv();
+}
+function renderRecover(picks, isGo, cap){
+  var el=document.getElementById('recover');
+  var valid=picks.filter(function(p){return p.o>0 && p.bl>0;});
+  if(isGo){ el.innerHTML='<div class="panel" style="border-color:#2f6b57"><b style="color:#7ef0bd">勝負レース＝勝負枠で厚く（上の推奨額）。</b> 回収枠の薄張りは不要（資金は勝負枠に集中）。</div>'; return; }
+  if(valid.length<2){ el.innerHTML=''; return; }
+  valid.sort(function(a,b){return b.bl-a.bl;});
+  var hon=valid[0], aite=valid.slice(1,4);
+  var B=Math.max(0,cap);
+  var fuku=Math.round(B*0.4/100)*100;
+  var wb=B-fuku, sw=aite.reduce(function(a,p){return a+p.bl;},0);
+  var wrows=aite.map(function(p){ var amt=sw>0?Math.round(wb*(p.bl/sw)/100)*100:0; return {c:'ワイド '+hon.name+' − '+p.name, a:amt}; });
+  var total=fuku+wrows.reduce(function(a,r){return a+r.a;},0);
+  var honWeak = hon.ev<0.85;
+  el.innerHTML='<div class="panel" style="border-color:#6b5a2f">'+
+    '<b style="color:#ffd97a">⏸ 見送り → 回収モード（薄く・本命軸 ／ 娯楽・練習・データ枠）</b>'+
+    '<div class="mut2" style="margin:4px 0 8px">JRAで市場が過小評価しがちな<b>本命の複勝</b>を主に、<b>本命軸ワイド</b>で混pの傾斜配分。赤字前提・上限内。本命＝混p最上位 <b>'+hon.name+'</b>'+(honWeak?'　<span class="warn">※本命もEV0.85未満＝薄味。最小額 or 完全見送りも可</span>':'')+'</div>'+
+    '<table class="bt"><thead><tr><th>券種</th><th class="num">金額</th></tr></thead><tbody>'+
+    '<tr><td>複勝　'+hon.name+'</td><td class="num stake">'+yen(fuku)+'</td></tr>'+
+    wrows.map(function(r){return '<tr><td>'+r.c+'</td><td class="num stake">'+yen(r.a)+'</td></tr>';}).join('')+
+    '<tr><td><b>合計</b></td><td class="num"><b>'+yen(total)+'</b></td></tr>'+
+    '</tbody></table>'+
+    '<div class="mut2" style="margin-top:6px">※回収枠 1レース上限 '+yen(cap)+'／月上限 '+yen(num(document.getElementById('recmo').value))+'。月上限を超えたら今月は薄張りも止める（＝勝負枠を温存）。3連複の広げすぎはトリガミ＝避ける。当日bet.htmlでEV≥しきい値が出たら<b>勝負枠へ格上げ</b>。</div>'+
+    '</div>';
 }
 function bindInputs(){
   document.querySelectorAll('#tb input').forEach(function(inp){
@@ -167,7 +195,7 @@ document.getElementById('add').addEventListener('click',function(){ rows.push({n
 document.getElementById('clr').addEventListener('click',function(){ rows=[{n:'',p:'',o:''},{n:'',p:'',o:''},{n:'',p:'',o:''}]; render(); });
 document.getElementById('caddr').addEventListener('click',function(){ clvRows.push({n:'',a:'',b:''}); renderClv(); });
 ['w','lam','ev'].forEach(function(id){ document.getElementById(id).addEventListener('input',render); });
-document.getElementById('bank').addEventListener('input',render);
+['bank','recap','recmo'].forEach(function(id){ document.getElementById(id).addEventListener('input',render); });
 render();
 </script>
 </body>
