@@ -62,6 +62,7 @@
 
   <section>
     <h2><span class="no">①</span>出走馬（自分p％・単勝オッズ）</h2>
+    <p class="mut2" style="margin:-2px 0 8px">自分p%は <a href="score.html">🧠 8視点ウェイトで自動生成</a> できます（地力重視の重み付け）。生成後「勝負判定へ送る」でここに自動入力。</p>
     <div style="overflow-x:auto">
     <table class="bt" id="tbl">
       <thead><tr><th>馬</th><th class="num">自分p%</th><th class="num">単勝</th><th class="num">市場%</th><th class="num">混p%</th><th class="num">エッジ</th><th class="num">EV</th><th class="num">推奨単勝¥</th></tr></thead>
@@ -96,6 +97,8 @@
 <script>
 var rows=[ {n:'',p:'',o:''},{n:'',p:'',o:''},{n:'',p:'',o:''},{n:'',p:'',o:''} ];
 var clvRows=[ {n:'',a:'',b:''},{n:'',a:'',b:''} ];
+// score.html（8視点ウェイト）からの自分p・オッズ受け取り
+try{ var _pf=localStorage.getItem('bet_prefill'); if(_pf){ var _a=JSON.parse(_pf); if(_a&&_a.length){ rows=_a.map(function(x){return {n:x.n||'', p:(x.p!=null?String(x.p):''), o:(x.o!=null?String(x.o):'')};}); } localStorage.removeItem('bet_prefill'); } }catch(e){}
 
 function num(x){ var v=parseFloat(String(x).replace(/[,\s]/g,'')); return isNaN(v)?0:v; }
 function yen(x){ return '¥'+Math.round(x).toLocaleString(); }

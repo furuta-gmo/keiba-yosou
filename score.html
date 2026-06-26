@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>8視点ウェイト → 自分p生成</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .wgrid{display:grid;grid-template-columns:1fr;gap:7px;margin:6px 0}
+  .wrow{display:grid;grid-template-columns:1fr 54px 92px;gap:8px;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
+  .wrow .lb{font-size:12.5px}.wrow .lb small{color:var(--mut);font-size:10.5px;display:block}
+  .wrow .pc{font-weight:800;text-align:right;font-variant-numeric:tabular-nums;font-size:13px}
+  .wrow input[type=range]{width:100%}
+  .heavy{border-left:3px solid #7ef0bd}.light{border-left:3px solid #ffb27a}
+  table.bt{font-size:12px}table.bt th,table.bt td{padding:5px 4px;text-align:center}
+  table.bt input{width:34px;background:#0e1a26;border:1px solid var(--line);color:var(--tx);border-radius:6px;padding:4px 2px;font-size:13px;text-align:center}
+  table.bt input.nm{width:78px;text-align:left}table.bt input.od{width:48px;text-align:right}
+  .pcell{font-weight:800;color:#7ef0bd;font-variant-numeric:tabular-nums}
+  .mk{font-size:16px;font-weight:800}
+  .pos{color:#7ef0bd}.neg{color:#ffb27a}
+  .btn{background:#0e1a26;border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer}
+  .btn:hover{border-color:var(--acc)}.btn.p{background:rgba(255,217,122,.15);border-color:var(--gold);color:var(--gold);font-weight:700}
+  .mut2{font-size:11.5px;color:var(--mut)}
+  .panel{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin:8px 0;font-size:12.5px}
+  .totbad{color:#ffb27a;font-weight:700}
+</style>
+<meta name="theme-color" content="#102132">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="競馬予想">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js')})}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← レース一覧へ</a>
+  <header class="hero">
+    <span class="race-tag">8視点ウェイト・スコアリング</span>
+    <h1>8視点 → 自分p を作る 🧠</h1>
+    <div class="sub">各馬を<b>8視点で1〜5点</b>に採点→<b>視点ごとの重み</b>（地力重視・薄データ低評価＝敗因の反省を反映）で加重→<b>自分p%を自動生成</b>。そのまま <a href="bet.html">⚖勝負判定</a> へ送れます。<br><span class="mut">採点は 3=その視点で平均/市場並み、5=明確に上位、1=明確に劣る。多くは3のままでよい（突出/劣勢の視点だけ動かす）。</span></div>
+  </header>
+
+  <section>
+    <h2><span class="no">⚖</span>視点の重み（合計100%が目安）</h2>
+    <div class="wgrid" id="wg"></div>
+    <div style="margin-top:6px"><button class="btn" id="wreset">推奨ウェイトに戻す</button> <span class="mut2" id="wtot"></span></div>
+    <p class="mut2">★緑=地力(近走/指数)＝最重視。橙=低ウェイト：⑤オッズは市場ブレンドで別途反映＝二重計上回避、⑧データ傾向は薄サンプル過信防止（過去の敗因）。<br>下の「メリハリ」＝点差を勝率差にどれだけ反映するか（大=人気薄まで差が開く／小=拮抗）。</p>
+    <div class="wrow" style="grid-template-columns:1fr 92px"><div class="lb">確率のメリハリ β <small>強いほど上位に集中</small></div><input type="range" id="beta" min="0.4" max="1.6" step="0.05" value="0.90"><div class="pc" style="grid-column:2;display:none"></div></div>
+    <div class="mut2" style="text-align:right">β=<b id="bl">0.90</b></div>
+  </section>
+
+  <section>
+    <h2><span class="no">①</span>出走馬を8視点で採点（1〜5）</h2>
+    <div style="overflow-x:auto">
+      <table class="bt" id="tbl">
+        <thead><tr id="head"></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:8px"><button class="btn" id="add">＋ 馬を追加</button> <button class="btn" id="clr">クリア</button></div>
+    <p class="mut2" id="cols" style="margin-top:6px"></p>
+  </section>
+
+  <section>
+    <h2><span class="no">▶</span>結果：自分p と 印</h2>
+    <div id="result"></div>
+    <div style="margin-top:10px"><button class="btn p" id="send">⚖ この自分p・オッズで勝負判定へ送る →</button></div>
+    <p class="mut2">送ると bet.html に馬名・自分p・オッズが自動で入り、市場ブレンドEV→勝負/見送り→サイジングまで一気に判定できます。</p>
+  </section>
+
+  <footer>8視点ウェイト ｜ <a href="bet.html">勝負判定</a> / <a href="autumn-watch.html">🍁ウォッチ</a> / <a href="track.html">検証</a> / <a href="index.html">一覧</a><br>
+  ※自分pは見立て＝完璧でなくてよい。ブレンド(bet.html)とtrack.html較正で長期に矯正。</footer>
+</div>
+
+<script>
+var VP=[
+ {k:'①展開',  w:12, note:'ペース・隊列・脚質適性'},
+ {k:'②血統',  w:12, note:'距離・馬場適性の根拠'},
+ {k:'③近走',  w:22, note:'地力・格（重賞実績/近走の格）', heavy:1},
+ {k:'④コース馬場',w:14,note:'当該コース・馬場への適性'},
+ {k:'⑤オッズ',w:6,  note:'市場の歪み（低重み=ブレンドで別途反映）', light:1},
+ {k:'⑥調教',  w:10, note:'仕上がり・気配'},
+ {k:'⑦指数',  w:18, note:'能力の数値裏付け（地力）', heavy:1},
+ {k:'⑧データ',w:6,  note:'データ傾向（低重み=薄サンプル過信防止）', light:1}
+];
+var DEF=VP.map(function(v){return v.w;});
+var rows=[ mk(),mk(),mk(),mk(),mk() ];
+function mk(){ return {n:'', s:[3,3,3,3,3,3,3,3], o:''}; }
+function num(x){ var v=parseFloat(String(x).replace(/[,\s]/g,'')); return isNaN(v)?0:v; }
+
+// try prefill from a prior score session
+try{ var sv=localStorage.getItem('score_state'); if(sv){ var o=JSON.parse(sv); if(o.rows&&o.rows.length){ rows=o.rows; } if(o.w){ VP.forEach(function(v,i){ if(o.w[i]!=null)v.w=o.w[i]; }); } if(o.beta){ /*set later*/ } } }catch(e){}
+
+function renderWeights(){
+  var wg=document.getElementById('wg'); wg.innerHTML='';
+  var tot=0; VP.forEach(function(v){tot+=v.w;});
+  VP.forEach(function(v,i){
+    var d=document.createElement('div');
+    d.className='wrow '+(v.heavy?'heavy':v.light?'light':'');
+    d.innerHTML='<div class="lb">'+v.k+'<small>'+v.note+'</small></div>'+
+      '<div class="pc">'+v.w+'%</div>'+
+      '<input type="range" min="0" max="30" step="1" value="'+v.w+'" data-wi="'+i+'">';
+    wg.appendChild(d);
+  });
+  document.getElementById('wtot').innerHTML = '合計 <b class="'+(tot===100?'':'totbad')+'">'+tot+'%</b>'+(tot===100?'':'（加重は自動で正規化されます）');
+  wg.querySelectorAll('input').forEach(function(inp){
+    inp.addEventListener('input',function(){ VP[+inp.getAttribute('data-wi')].w=+inp.value; renderWeights(); compute(); save(); });
+  });
+}
+function renderHead(){
+  var h=document.getElementById('head');
+  h.innerHTML='<th>馬</th>'+VP.map(function(v){return '<th title="'+v.note+'">'+v.k.replace(/[①-⑧]/,'')+'</th>';}).join('')+'<th class="od">単勝</th>';
+  document.getElementById('cols').innerHTML='視点: '+VP.map(function(v){return v.k;}).join(' / ')+'（3=市場並み）';
+}
+function renderRows(){
+  var tb=document.getElementById('tb'); tb.innerHTML='';
+  rows.forEach(function(r,i){
+    var tr=document.createElement('tr');
+    var cells='<td><input class="nm" data-i="'+i+'" data-k="n" value="'+(r.n||'')+'"></td>';
+    for(var j=0;j<8;j++) cells+='<td><input data-i="'+i+'" data-sj="'+j+'" inputmode="numeric" value="'+r.s[j]+'"></td>';
+    cells+='<td><input class="od" data-i="'+i+'" data-k="o" inputmode="decimal" value="'+(r.o||'')+'"></td>';
+    tr.innerHTML=cells; tb.appendChild(tr);
+  });
+  tb.querySelectorAll('input').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      var i=+inp.getAttribute('data-i');
+      if(inp.getAttribute('data-sj')!=null){ var j=+inp.getAttribute('data-sj'); var val=Math.max(1,Math.min(5,num(inp.value)||3)); rows[i].s[j]=val; compute(); }
+      else { var k=inp.getAttribute('data-k'); rows[i][k]=inp.value; if(k==='o')compute(); }
+      save();
+    });
+  });
+}
+function compute(){
+  var beta=parseFloat(document.getElementById('beta').value);
+  document.getElementById('bl').textContent=beta.toFixed(2);
+  var wsum=0; VP.forEach(function(v){wsum+=v.w;}); if(wsum<=0)wsum=1;
+  // weighted ability score S (1..5) per horse
+  var arr=rows.map(function(r,idx){
+    var S=0; for(var j=0;j<8;j++) S+=VP[j].w*r.s[j]; S/=wsum;
+    return {i:idx, n:r.n||('馬'+(idx+1)), S:S, o:num(r.o), e:Math.exp(beta*S)};
+  });
+  var esum=arr.reduce(function(a,x){return a+x.e;},0)||1;
+  // market
+  var so=0; arr.forEach(function(x){ if(x.o>0) so+=1/x.o; });
+  arr.forEach(function(x){ x.p=x.e/esum; x.mkt=(x.o>0&&so>0?(1/x.o)/so:null); x.edge=(x.mkt!=null?(x.p-x.mkt)*100:null); });
+  // rank for 印
+  var ranked=arr.slice().sort(function(a,b){return b.p-a.p;});
+  var marks=['◎','○','▲','△','△'];
+  ranked.forEach(function(x,r){ x.mark = r<5?marks[r]:(x.p>0.04?'ヒモ':'消'); x.rank=r; });
+  window._scoreArr=arr;
+  // render
+  var rowsH=arr.slice().sort(function(a,b){return b.p-a.p;}).map(function(x){
+    var ec=x.edge==null?'':(x.edge>0?'pos':'neg');
+    return '<tr><td class="mk">'+x.mark+'</td><td style="text-align:left">'+x.n+'</td>'+
+      '<td class="num">'+x.S.toFixed(2)+'</td>'+
+      '<td class="num pcell">'+(x.p*100).toFixed(1)+'%</td>'+
+      '<td class="num">'+(x.mkt!=null?(x.mkt*100).toFixed(1)+'%':'—')+'</td>'+
+      '<td class="num '+ec+'">'+(x.edge!=null?(x.edge>0?'+':'')+x.edge.toFixed(1):'—')+'</td>'+
+      '<td class="num">'+(x.o>0?x.o.toFixed(1):'—')+'</td></tr>';
+  }).join('');
+  document.getElementById('result').innerHTML=
+    '<div style="overflow-x:auto"><table class="bt"><thead><tr><th>印</th><th>馬</th><th>加重<br>スコア</th><th>自分p</th><th>市場p</th><th>エッジ</th><th>単勝</th></tr></thead><tbody>'+rowsH+'</tbody></table></div>'+
+    '<p class="mut2" style="margin-top:6px">印は自分pの順位（◎○▲△）。エッジ＝自分p−市場p（+で妙味側）。オッズ未入力なら市場p/エッジは「—」。最終的な勝負/見送りは <a href="bet.html">bet.html</a> が市場ブレンドEVで判定。</p>';
+}
+function save(){
+  try{ localStorage.setItem('score_state', JSON.stringify({rows:rows, w:VP.map(function(v){return v.w;}), beta:document.getElementById('beta').value})); }catch(e){}
+}
+document.getElementById('wreset').addEventListener('click',function(){ VP.forEach(function(v,i){v.w=DEF[i];}); renderWeights(); compute(); save(); });
+document.getElementById('beta').addEventListener('input',function(){ compute(); save(); });
+document.getElementById('add').addEventListener('click',function(){ rows.push(mk()); renderRows(); compute(); save(); });
+document.getElementById('clr').addEventListener('click',function(){ rows=[mk(),mk(),mk()]; renderRows(); compute(); save(); });
+document.getElementById('send').addEventListener('click',function(){
+  var arr=window._scoreArr||[];
+  var out=arr.filter(function(x){return x.p>0;}).map(function(x){ return {n:x.n, p:+(x.p*100).toFixed(1), o:x.o>0?x.o:''}; });
+  if(!out.length){ alert('先に採点してください'); return; }
+  try{ localStorage.setItem('bet_prefill', JSON.stringify(out)); }catch(e){}
+  location.href='bet.html';
+});
+// init
+renderWeights(); renderHead(); renderRows();
+(function(){ try{ var sv=localStorage.getItem('score_state'); if(sv){ var o=JSON.parse(sv); if(o.beta) document.getElementById('beta').value=o.beta; } }catch(e){} })();
+compute();
+</script>
+</body>
+</html>
