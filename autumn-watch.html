@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>2026 秋G1 ウォッチリスト</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px;font-size:12px}
+  .legend span{border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+  .card{background:var(--card2);border:1px solid var(--line);border-left-width:4px;border-radius:13px;padding:13px 15px;margin:11px 0}
+  .card h3{margin:0 0 2px;font-size:16.5px}
+  .meta{font-size:12px;color:var(--mut);margin-bottom:8px}
+  .stars{float:right;font-size:13px;font-weight:800;letter-spacing:1px}
+  .row{display:flex;gap:8px;font-size:13px;margin:5px 0;line-height:1.5}
+  .row .k{flex:0 0 64px;color:var(--mut);font-size:11.5px;padding-top:1px}
+  .row .v{flex:1}
+  .tk{display:inline-block;background:#0e1a26;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:11.5px;margin:1px 2px 1px 0}
+  .ly{font-size:11.5px;color:var(--mut);border-top:1px dashed var(--line);margin-top:8px;padding-top:6px}
+  .skip{color:#ffb27a}
+  .prio{background:rgba(255,217,122,.07);border:1px solid #6b5a2f;border-radius:12px;padding:11px 14px;font-size:13px;margin:8px 0}
+</style>
+<meta name="theme-color" content="#102132">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="競馬予想">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js')})}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="index.html">← レース一覧へ</a>
+  <header class="hero">
+    <span class="race-tag">2026 秋シーズン・出撃計画</span>
+    <h1>秋G1 ウォッチリスト 🍁</h1>
+    <div class="sub">目的＝<b>年数回の大妙味G1を逃さず厚く取る</b>。全12走を<b>事前に「妙味の出やすさ」でふるい</b>、★★★の勝負候補を深掘り、オッズが出たら <a href="bet.html">⚖勝負レース判定ツール</a> でエッジ→勝負/見送り→サイジング。<b>★☆は基本見送り</b>。<br><span class="mut">※妙味度は構造＋2025結果からの事前の目安。最終判断は現場の較正EVで（bet.html）。日程はJRA公式2026確定。</span></div>
+  </header>
+
+  <section>
+    <div class="legend">
+      <span>★★★ 妙味が出やすい＝勝負候補</span>
+      <span>★★☆〜★★ 中庸＝条件次第</span>
+      <span class="skip">★☆ 堅め＝基本見送り</span>
+    </div>
+    <div class="prio"><b>🎯 今季の最優先（深掘り対象）：</b>スプリンターズS・菊花賞・阪神JF・朝日杯FS・ホープフルS・<b>有馬記念</b>。<br>
+    あなたの的中実績（2025天皇賞秋5万→25万／有馬10万→60万）は<b>「実力本命を連軸に、相手・3連系で過剰人気の脆さを突く」</b>型。秋は特に<b>有馬（中山2500の紛れ＋ファン投票の過剰人気）</b>が最大の狙い目。</div>
+  </section>
+
+  <section id="list"></section>
+
+  <section>
+    <h2><span class="no">▸</span>運用フロー（各レース共通）</h2>
+    <div class="prio" style="background:rgba(45,212,191,.06);border-color:#1f5a52">
+      <b>①1週前</b>：このリストで「妙味が出そうか」を予測→出走想定メンバーを見て狙い筋を仮置き。<br>
+      <b>②枠順後（木）</b>：枠・隊列でペース/バイアスを想定（前残り/差し）。過剰人気の脆い本命を特定。<br>
+      <b>③当日オッズ</b>：<a href="bet.html">bet.html</a> に自分p・オッズ→<b>最大EV≥1.25なら勝負・未満は見送り</b>。conviction別にサイジング。<br>
+      <b>④締切直前</b>：bet.html③で「人気急騰＝賢い金」を確認→本線を最終確定。<br>
+      <b>⑤事後</b>：エッジ・結果・CLVを <a href="track.html">track.html</a> に記録（forward-test）。
+    </div>
+  </section>
+
+  <footer>2026 秋G1ウォッチリスト ｜ <a href="bet.html">勝負判定</a> / <a href="track.html">検証</a> / <a href="index.html">一覧</a><br>
+  ※妙味度は事前の構造的目安。馬券は自己責任。</footer>
+</div>
+
+<script>
+var C={hi:'#7ef0bd',mid:'#2dd4bf',lo:'#ffb27a'};
+var R=[
+ {nm:'スプリンターズS',d:'9/27(日)',cv:'中山・芝1200m',lv:3,
+  why:'スプリントは能力差が小さく、枠・展開・馬場バイアスの影響が大＝紛れが多い。2025は11番人気が単勝5,000円で1着。',
+  aim:['内先行 vs 外差しの中山バイアス','夏スプリント路線の上がり馬','過剰人気の取りこぼし'],
+  bet:'馬連・3連複(手広く)＋3連単跳ね少額',
+  skip:'圧倒的1強に人気集中かつ展開不問なら薄味に',
+  ly:'2025: 1番人気=圏外／勝3連単 1,301,150円(大荒れ)'},
+ {nm:'秋華賞',d:'10/18(日)',cv:'京都・芝2000m',lv:2,
+  why:'3歳牝馬限定で能力序列はある程度明確だが、夏の成長・ローテで人気が偏りやすい。2025は1番人気16着で波乱。',
+  aim:['夏に上昇した上がり馬','桜花賞/オークスからの距離・コース適性','過剰人気の主役を疑う'],
+  bet:'馬連・3連複',
+  skip:'二冠級が抜けて堅いなら連は薄味',
+  ly:'2025: 1番人気=16着／勝3連単 129,850円'},
+ {nm:'菊花賞',d:'10/25(日)',cv:'京都・芝3000m',lv:2.5,
+  why:'3歳長距離・距離未経験で人気が割れ、ステイヤー血統で妙味。2025は3着に13番人気(82.6倍)＝3連系が大荒れ。',
+  aim:['長距離(ステイヤー)血統の人気薄を3列目に','スタミナ/折り合い','京都外回りの末脚'],
+  bet:'3連複(3列目に穴)・ワイド。軸は地力上位',
+  skip:'基本は狙い目（無理に見送らない）',
+  ly:'2025: 1番人気=1着／勝3連単 140,270円(3着13人気)'},
+ {nm:'天皇賞(秋)',d:'11/1(日)',cv:'東京・芝2000m',lv:2,
+  why:'古馬中距離の頂点・実力決着しやすく単勝は堅め。但し相手の組み立てで大きく取れる＝あなたの2025的中(5万→25万)型。',
+  aim:['過剰人気の本命は"連軸"に据える','相手に適性/上がり馬を厚く','3連系で手薄な2-3着を取る'],
+  bet:'馬連・3連複(本命軸-相手厚め)',
+  skip:'1強が全方位で抜けチャラ決着濃厚なら見送り',
+  ly:'2025: 1番人気=1着(2.7倍)／勝3連単 15,860円(堅い)'},
+ {nm:'エリザベス女王杯',d:'11/15(日)',cv:'京都・芝2200m',lv:2,
+  why:'古馬牝馬・気分屋で紛れる・人気が割れやすい。展開ハマりで配当が伸びる年も。',
+  aim:['展開ハマりの差し/先行','距離延長/短縮の適性','牝馬の体調・気配'],
+  bet:'馬連・3連複',
+  skip:'実績抜けた牝馬が順当濃厚なら薄味',
+  ly:'2025: 1番人気=1着(2.3倍)／勝3連単 24,680円'},
+ {nm:'マイルCS',d:'11/22(日)',cv:'京都・芝1600m',lv:1.5,
+  why:'マイル王決定戦・実力上位が堅い傾向。2025は1番人気1.8倍で順当。妙味は出にくい。',
+  aim:['ペース/枠での差し台頭','過剰人気が堅いなら見送り寄り'],
+  bet:'馬連(本命軸-相手少点)。妙味薄なら見送り',
+  skip:'抜けた本命が順当濃厚なら見送り',
+  ly:'2025: 1番人気=1着(1.8倍)／勝3連単 52,470円'},
+ {nm:'ジャパンC',d:'11/29(日)',cv:'東京・芝2400m',lv:1.5,
+  why:'近年は日本馬の実力上位が順当・外国馬は手薄。波乱は出にくい。',
+  aim:['3歳馬の斤量利・ローテ','上がり馬の台頭','堅いなら見送り'],
+  bet:'馬連(少点)。妙味薄なら見送り',
+  skip:'実力上位が順当濃厚なら見送り',
+  ly:'2025: 1番人気=2着／勝3連単 11,070円(堅い)'},
+ {nm:'チャンピオンズC',d:'12/6(日)',cv:'中京・ダート1800m',lv:2,
+  why:'ダート古馬・砂適性で比較的読みやすいが人気薄も来る。2025は1番人気13着で本命崩れ。',
+  aim:['砂適性・脚質・距離実績','地方/海外帰りの実績馬','過剰人気の脆さ'],
+  bet:'馬連・3連複',
+  skip:'砂巧者が抜けて堅いなら薄味',
+  ly:'2025: 1番人気=13着／勝3連単 36,790円'},
+ {nm:'阪神JF',d:'12/13(日)',cv:'阪神・芝1600m(2歳牝)',lv:3,
+  why:'2歳戦・キャリア浅く能力未知数＝人気が当てにならず波乱余地大。ただし情報が少なく読みも難しい。',
+  aim:['素質/前走からの上積み','血統(仕上がり・距離)','前走の相手レベルと内容'],
+  bet:'3連複・ワイド(手広く)。自信無ければ見送り',
+  skip:'根拠が薄く確信が持てなければ見送り(2歳は無理しない)',
+  ly:'2025: 1番人気=圏外／勝3連単 30,180円'},
+ {nm:'朝日杯FS',d:'12/20(日)',cv:'阪神・芝1600m(2歳)',lv:2.5,
+  why:'2歳マイル(牡牝混合)・能力未知数で人気が読みにくい＝妙味余地。',
+  aim:['マイル適性・デビュー〜前走の内容','関西/関東の素質馬','過剰人気の評判馬を疑う'],
+  bet:'3連複・ワイド。軸は内容上位',
+  skip:'評判馬が実力で抜けて堅いなら薄味',
+  ly:'2025: 1番人気=3着／勝3連単 7,510円'},
+ {nm:'ホープフルS',d:'12/26(土)',cv:'中山・芝2000m(2歳)',lv:3,
+  why:'2歳中距離・荒れやすい。2025は7番人気が1着、3連単368,180円の大波乱。',
+  aim:['中距離/クラシック血統','中山(小回り)適性','上がり馬・前走快勝組'],
+  bet:'3連複(穴3列目)・ワイド',
+  skip:'抜けた素質馬が順当濃厚なら薄味',
+  ly:'2025: 1番人気=7着／勝3連単 368,180円(大荒れ)'},
+ {nm:'有馬記念',d:'12/27(日)',cv:'中山・芝2500m(グランプリ)',lv:3,
+  why:'ファン投票・多頭数16頭・中山2500の特殊コース(コーナー6つ・内回り)＝紛れ/展開/枠の影響が最大。あなたの2025的中(10万→60万)型＝今季最大の狙い目。',
+  aim:['中山2500適性(内枠・小回り・先行/立ち回り)','ファン投票/有名馬の過剰人気の脆さ','前残り/差しのペース読み','引退レースの状態・気配'],
+  bet:'馬連・3連複(手広く・複数軸)＋3連単跳ね',
+  skip:'基本は最大の狙い目。無理に見送らない',
+  ly:'グランプリ＝紛れ多。複数軸＋3連系で大きく取りに行く'},
+];
+var html='';
+R.forEach(function(r){
+  var col=r.lv>=3?C.hi:(r.lv>=2?C.mid:C.lo);
+  var st=r.lv>=3?'★★★':r.lv>=2.5?'★★☆':r.lv>=2?'★★':'★☆';
+  html+='<div class="card" style="border-left-color:'+col+'">'+
+    '<span class="stars" style="color:'+col+'">'+st+'</span>'+
+    '<h3>'+r.nm+'</h3><div class="meta">'+r.d+' ・ '+r.cv+'</div>'+
+    '<div class="row"><div class="k">妙味の源</div><div class="v">'+r.why+'</div></div>'+
+    '<div class="row"><div class="k">狙い筋</div><div class="v">'+r.aim.map(function(a){return '<span class="tk">'+a+'</span>';}).join('')+'</div></div>'+
+    '<div class="row"><div class="k">本線券種</div><div class="v">'+r.bet+'</div></div>'+
+    '<div class="row"><div class="k '+(r.lv<2?'skip':'')+'">見送り条件</div><div class="v '+(r.lv<2?'skip':'')+'">'+r.skip+'</div></div>'+
+    '<div class="ly">'+r.ly+'</div></div>';
+});
+document.getElementById('list').innerHTML=html;
+</script>
+</body>
+</html>
