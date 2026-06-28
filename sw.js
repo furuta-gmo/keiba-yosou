@@ -1,6 +1,6 @@
 /* 競馬予想PWA Service Worker
    バージョンを上げる(=CACHEを変える)と、次回オンライン時に更新が反映されます。 */
-const CACHE = 'keiba-yosou-v44';
+const CACHE = 'keiba-yosou-v52';
 
 const ASSETS = [
   './',
@@ -97,15 +97,31 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// 取得: キャッシュ優先 → なければネット取得して動的キャッシュ（オフライン閲覧）
+// 取得:
+//  ・HTML/ページ遷移 = ネット優先（オンライン時は常に最新を取得しキャッシュも更新／オフライン時のみキャッシュ）
+//    → これで「古い予想がスマホに残る」問題を解消（旧キャッシュ優先方式の弱点を修正）
+//  ・CSS/JS/画像 = キャッシュ優先＋動的キャッシュ（オフライン閲覧・高速表示）
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(e.request).then((hit) => {
-      if (hit) return hit;
-      return fetch(e.request).then((res) => {
+  const req = e.request;
+  const isHTML = req.mode === 'navigate' ||
+    (req.headers.get('accept') || '').includes('text/html');
+  if (isHTML) {
+    e.respondWith(
+      fetch(req).then((res) => {
         const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+        return res;
+      }).catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
+    );
+    return;
+  }
+  e.respondWith(
+    caches.match(req).then((hit) => {
+      if (hit) return hit;
+      return fetch(req).then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
         return res;
       }).catch(() => caches.match('./index.html'));
     })
