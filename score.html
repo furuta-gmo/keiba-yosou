@@ -38,20 +38,20 @@
   <header class="hero">
     <span class="race-tag">8視点ウェイト・スコアリング</span>
     <h1>8視点 → 自分p を作る 🧠</h1>
-    <div class="sub">各馬を<b>8視点で1〜5点</b>に採点→<b>視点ごとの重み</b>（地力重視・薄データ低評価＝敗因の反省を反映）で加重→<b>自分p%を自動生成</b>。そのまま <a href="bet.html">⚖勝負判定</a> へ送れます。<br><span class="mut">採点は 3=その視点で平均/市場並み、5=明確に上位、1=明確に劣る。多くは3のままでよい（突出/劣勢の視点だけ動かす）。</span></div>
+    <div class="sub">各馬を<b>9視点で1〜5点</b>に採点→<b>視点ごとの重み</b>（地力重視・薄データ低評価＝敗因の反省を反映）で加重→<b>自分p%を自動生成</b>。そのまま <a href="bet.html">⚖勝負判定</a> へ送れます。<br><span class="mut">採点は 3=その視点で平均/市場並み、5=明確に上位、1=明確に劣る。多くは3のままでよい（突出/劣勢の視点だけ動かす）。<b>⑨騎手</b>＝コース/距離適性・強化乗り替わりを低重みで反映。</span></div>
   </header>
 
   <section>
     <h2><span class="no">⚖</span>視点の重み（合計100%が目安）</h2>
     <div class="wgrid" id="wg"></div>
     <div style="margin-top:6px"><button class="btn" id="wreset">推奨ウェイトに戻す</button> <span class="mut2" id="wtot"></span></div>
-    <p class="mut2">★緑=地力(近走/指数)＝最重視。橙=低ウェイト：⑤オッズは市場ブレンドで別途反映＝二重計上回避、⑧データ傾向は薄サンプル過信防止（過去の敗因）。<br>下の「メリハリ」＝点差を勝率差にどれだけ反映するか（大=人気薄まで差が開く／小=拮抗）。</p>
+    <p class="mut2">★緑=地力(近走/指数)＝最重視。橙=低ウェイト：⑤オッズは市場ブレンドで別途反映＝二重計上回避、⑧データ傾向は薄サンプル過信防止、<b>⑨騎手は総合力が市場に織込み済＋コース別成績が小サンプル/交絡＝低重み（強化乗替・特殊コース経験のタイブレーク用）</b>。<br>下の「メリハリ」＝点差を勝率差にどれだけ反映するか（大=人気薄まで差が開く／小=拮抗）。</p>
     <div class="wrow" style="grid-template-columns:1fr 92px"><div class="lb">確率のメリハリ β <small>強いほど上位に集中</small></div><input type="range" id="beta" min="0.4" max="1.6" step="0.05" value="0.90"><div class="pc" style="grid-column:2;display:none"></div></div>
     <div class="mut2" style="text-align:right">β=<b id="bl">0.90</b></div>
   </section>
 
   <section>
-    <h2><span class="no">①</span>出走馬を8視点で採点（1〜5）</h2>
+    <h2><span class="no">①</span>出走馬を9視点で採点（1〜5）</h2>
     <div style="overflow-x:auto">
       <table class="bt" id="tbl">
         <thead><tr id="head"></tr></thead>
@@ -77,20 +77,22 @@
 var VP=[
  {k:'①展開',  w:12, note:'ペース・隊列・脚質適性'},
  {k:'②血統',  w:12, note:'距離・馬場適性の根拠'},
- {k:'③近走',  w:22, note:'地力・格（重賞実績/近走の格）', heavy:1},
- {k:'④コース馬場',w:14,note:'当該コース・馬場への適性'},
- {k:'⑤オッズ',w:6,  note:'市場の歪み（低重み=ブレンドで別途反映）', light:1},
- {k:'⑥調教',  w:10, note:'仕上がり・気配'},
- {k:'⑦指数',  w:18, note:'能力の数値裏付け（地力）', heavy:1},
- {k:'⑧データ',w:6,  note:'データ傾向（低重み=薄サンプル過信防止）', light:1}
+ {k:'③近走',  w:20, note:'地力・格（重賞実績/近走の格）', heavy:1},
+ {k:'④コース馬場',w:13,note:'当該コース・馬場への適性'},
+ {k:'⑤オッズ',w:5,  note:'市場の歪み（低重み=ブレンドで別途反映）', light:1},
+ {k:'⑥調教',  w:9,  note:'仕上がり・気配'},
+ {k:'⑦指数',  w:17, note:'能力の数値裏付け（地力）', heavy:1},
+ {k:'⑧データ',w:6,  note:'データ傾向（低重み=薄サンプル過信防止）', light:1},
+ {k:'⑨騎手',  w:6,  note:'騎手のコース/距離適性・強化乗り替わり（低重み=総合力は市場に織込み済・小サンプル交絡）', light:1}
 ];
 var DEF=VP.map(function(v){return v.w;});
 var rows=[ mk(),mk(),mk(),mk(),mk() ];
-function mk(){ return {n:'', s:[3,3,3,3,3,3,3,3], o:''}; }
+function mk(){ var s=[]; for(var j=0;j<VP.length;j++)s.push(3); return {n:'', s:s, o:''}; }
 function num(x){ var v=parseFloat(String(x).replace(/[,\s]/g,'')); return isNaN(v)?0:v; }
+function padRow(r){ r.s=r.s||[]; while(r.s.length<VP.length)r.s.push(3); return r; }
 
 // try prefill from a prior score session
-try{ var sv=localStorage.getItem('score_state'); if(sv){ var o=JSON.parse(sv); if(o.rows&&o.rows.length){ rows=o.rows; } if(o.w){ VP.forEach(function(v,i){ if(o.w[i]!=null)v.w=o.w[i]; }); } if(o.beta){ /*set later*/ } } }catch(e){}
+try{ var sv=localStorage.getItem('score_state'); if(sv){ var o=JSON.parse(sv); if(o.rows&&o.rows.length){ rows=o.rows.map(padRow); } if(o.w){ VP.forEach(function(v,i){ if(o.w[i]!=null)v.w=o.w[i]; }); } if(o.beta){ /*set later*/ } } }catch(e){}
 
 function renderWeights(){
   var wg=document.getElementById('wg'); wg.innerHTML='';
@@ -110,7 +112,7 @@ function renderWeights(){
 }
 function renderHead(){
   var h=document.getElementById('head');
-  h.innerHTML='<th>馬</th>'+VP.map(function(v){return '<th title="'+v.note+'">'+v.k.replace(/[①-⑧]/,'')+'</th>';}).join('')+'<th class="od">単勝</th>';
+  h.innerHTML='<th>馬</th>'+VP.map(function(v){return '<th title="'+v.note+'">'+v.k.replace(/[①-⑨]/,'')+'</th>';}).join('')+'<th class="od">単勝</th>';
   document.getElementById('cols').innerHTML='視点: '+VP.map(function(v){return v.k;}).join(' / ')+'（3=市場並み）';
 }
 function renderRows(){
@@ -118,7 +120,7 @@ function renderRows(){
   rows.forEach(function(r,i){
     var tr=document.createElement('tr');
     var cells='<td><input class="nm" data-i="'+i+'" data-k="n" value="'+(r.n||'')+'"></td>';
-    for(var j=0;j<8;j++) cells+='<td><input data-i="'+i+'" data-sj="'+j+'" inputmode="numeric" value="'+r.s[j]+'"></td>';
+    for(var j=0;j<VP.length;j++) cells+='<td><input data-i="'+i+'" data-sj="'+j+'" inputmode="numeric" value="'+r.s[j]+'"></td>';
     cells+='<td><input class="od" data-i="'+i+'" data-k="o" inputmode="decimal" value="'+(r.o||'')+'"></td>';
     tr.innerHTML=cells; tb.appendChild(tr);
   });
@@ -137,7 +139,7 @@ function compute(){
   var wsum=0; VP.forEach(function(v){wsum+=v.w;}); if(wsum<=0)wsum=1;
   // weighted ability score S (1..5) per horse
   var arr=rows.map(function(r,idx){
-    var S=0; for(var j=0;j<8;j++) S+=VP[j].w*r.s[j]; S/=wsum;
+    var S=0; for(var j=0;j<VP.length;j++) S+=VP[j].w*(r.s[j]!=null?r.s[j]:3); S/=wsum;
     return {i:idx, n:r.n||('馬'+(idx+1)), S:S, o:num(r.o), e:Math.exp(beta*S)};
   });
   var esum=arr.reduce(function(a,x){return a+x.e;},0)||1;
