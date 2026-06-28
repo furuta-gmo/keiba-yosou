@@ -84,6 +84,7 @@
   <section>
     <h2><span class="no">③</span>締切直前オッズ動態（賢い金 / CLV検知）</h2>
     <p class="mut2">JRA実証(JRA-VAN 89万頭)：<b>締切直前にオッズが下落＝人気急騰した馬は、同じ最終オッズでも実現リターンが高い</b>(賢い金が直前に入る)。逆に直前で人気を落とす人気馬は黄信号。30分前と直前オッズを入れて確認（シグナルであって必勝ではない）。</p>
+    <p class="mut2" style="background:rgba(212,96,79,.08);border:1px solid #6b3a30;border-radius:8px;padding:8px 10px"><b style="color:#ffb27a">★CLV順序補正（2026/6/28の教訓）</b>：発走前にここで各馬のCLVを見て、<b>🟢正CLV(人気が集まる)の相手は◎へ繰り上げ・🔴負CLV(流れる)の本命は格下げ</b>。∵その日の◎(負CLV)は両方4着・正CLVの相手が1-3着＝印の"順序"をCLVで補正すれば的中に近づく。但しCLVも万能でない(荒れの分散)＝方向補正に使い絶対視しない。</p>
     <div style="overflow-x:auto">
     <table class="bt" id="clv"><thead><tr><th>馬</th><th class="num">30分前</th><th class="num">直前</th><th class="num">変化</th><th>判定</th></tr></thead><tbody id="ctb"></tbody></table>
     </div>
@@ -181,7 +182,7 @@ function renderClv(){
   var ctb=document.getElementById('ctb'); ctb.innerHTML='';
   clvRows.forEach(function(r,i){
     var a=num(r.a),b=num(r.b), chg=(a>0&&b>0)?((b-a)/a*100):0;
-    var sig= (a>0&&b>0)?(chg<=-10?'<span class="pos">🟢 人気急騰＝賢い金</span>':(chg>=15?'<span class="neg">🔴 失速＝黄信号</span>':'<span class="mut2">中立</span>')):'';
+    var sig= (a>0&&b>0)?(chg<=-10?'<span class="pos">🟢 正CLV＝賢い金→相手なら◎へ繰上げ候補</span>':(chg>=15?'<span class="neg">🔴 負CLV＝失速→本命でも軸から格下げ</span>':'<span class="mut2">中立</span>')):'';
     var tr=document.createElement('tr');
     tr.innerHTML='<td><input data-ci="'+i+'" data-k="n" value="'+(r.n||'')+'" style="width:90px;text-align:left"></td>'+
       '<td class="num"><input data-ci="'+i+'" data-k="a" inputmode="decimal" value="'+(r.a||'')+'"></td>'+
