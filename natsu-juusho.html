@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>夏重賞カレンダー 2026 — 妙味度★で事前ふるい分け</title>
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#102132">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js')})}</script>
+<style>
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}
+  .lz{font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:8px;padding:4px 10px}
+  .mhead{font-size:14px;color:var(--acc2);margin:20px 0 8px;letter-spacing:.04em;font-weight:700}
+  .rc{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+    background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:13px 15px;margin:8px 0}
+  .rc.next{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+  .rc.done{opacity:.55}
+  .rc .dt{font-variant-numeric:tabular-nums;font-size:13px;color:var(--mut);text-align:center;min-width:54px;line-height:1.35}
+  .rc .dt b{display:block;font-size:17px;color:var(--tx)}
+  .rc .nm{font-weight:700;font-size:16px}
+  .rc .nm .gd{font-size:11px;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+  .rc .nm .gd.g1{color:var(--gold);border-color:var(--gold)}
+  .rc .nm .gd.g2{color:var(--acc2);border-color:var(--acc2)}
+  .rc .meta2{color:var(--mut);font-size:12.5px;margin-top:3px}
+  .rc .aim{font-size:12.5px;color:#bfe;margin-top:4px}
+  .rc .rt{text-align:right;min-width:74px}
+  .star{font-size:14px;letter-spacing:1px;white-space:nowrap}
+  .star.s3{color:#ff7a7a}.star.s2{color:var(--gold)}.star.s1{color:var(--mut)}
+  .st{display:inline-block;font-size:11px;border-radius:6px;padding:1px 8px;margin-top:5px;font-weight:700;white-space:nowrap}
+  .st.wait{background:#1a2734;color:var(--mut);border:1px solid var(--line)}
+  .st.soon{background:rgba(245,197,66,.16);color:#ffd97a;border:1px solid #a9842a}
+  .st.done{background:rgba(22,163,74,.16);color:#5ee08e;border:1px solid #1f7a44}
+  .banner{display:flex;gap:11px;align-items:flex-start;background:rgba(245,197,66,.07);
+    border:1px solid #6b561f;border-radius:12px;padding:13px 15px;margin:6px 0 2px}
+  .banner .i{font-size:19px}
+  .banner b{color:var(--gold)}
+  .flow{background:#0e1a26;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:13px}
+  .flow li{margin:5px 0}
+  .tnt{font-style:italic;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="race-tag">夏competition ・ 半自動運用</span>
+    <h1>夏重賞カレンダー 2026 🌻</h1>
+    <div class="sub">7〜9月のJRA重賞を「妙味度★」で事前にふるい分け。★★★＝大妙味の出やすい波乱・ハンデ戦／★＝実力反映で堅め。直近レースは金色で強調。</div>
+  </header>
+
+  <section style="border-color:var(--gold)">
+    <div class="banner"><span class="i">⚙️</span>
+      <div><b>半自動の仕組み</b>：このカレンダーが恒久的な「セット」。各週末前に<b>週次ジョブ</b>が発火し、その週の重賞を準備してあなたに<b>「オッズ貼って」</b>とping。貼れば私が8視点→自分p→勝負判定まで自動整形してcommitします。<br>
+      <span class="mut" style="font-size:12px">※日付は<span class="tnt">JRA2026準拠・予定</span>。公式確定日程を貼っていただければロックします。日付精度は週次ジョブが直前に再確認して担保。</span></div>
+    </div>
+    <div class="legend">
+      <span class="lz">★★★ <span style="color:#ff7a7a">大妙味（波乱・ハンデ・スプリント）</span></span>
+      <span class="lz">★★ <span style="color:var(--gold)">中妙味（別定・条件次第）</span></span>
+      <span class="lz">★ <span style="color:var(--mut)">堅め（実力反映・薄データ2歳）</span></span>
+      <span class="lz">🟡直近 / ⚪待機 / 🟢済</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">📅</span>カレンダー</h2>
+    <div id="cal"></div>
+  </section>
+
+  <section>
+    <h2><span class="no">🔗</span>運用フロー</h2>
+    <ol class="flow">
+      <li><b>枠順発表（木〜金）</b> → 週次ジョブが該当レースを準備、ページ雛形を生成</li>
+      <li><b>前日〜当日朝</b> → オッズが出たら <b>claude.ai/code</b> でオッズを貼る（or 私からping）</li>
+      <li>私が <a href="score.html">🧠 score（8視点→自分p）</a> → <a href="bet.html">⚖ bet（勝負/見送り判定）</a> まで自動反映</li>
+      <li><b>★★★レースのみ</b>フル予想（前回2レース同様）。★★以下は回収枠で薄く or 見送り</li>
+      <li>結果は <a href="track.html">🔬 track（教訓ログ）</a> に蓄積 → 秋G1へ較正</li>
+    </ol>
+  </section>
+
+  <footer>
+    夏competition（forward-test）／ ※馬券は自己責任。★妙味度は構造的傾向であり的中を保証しません。<br>
+    更新は claude.ai/code または PC の Claude Code から <code>git push</code> で同期。
+  </footer>
+
+</div>
+
+<script>
+// 夏重賞データ（日付はJRA2026準拠・予定。確定後にロック）
+// type: ハンデ/別定/定量/G1 ／ star: 妙味度1-3 ／ done: 結果反映済み
+var R = [
+  {d:'2026-06-28', n:'函館記念',        g:'G3', c:'函館', dist:'芝2000', t:'ハンデ', star:3, aim:'済：2-10-3 大荒れ。見送り正解／◎4着クビ差', done:true},
+  {d:'2026-06-28', n:'ラジオNIKKEI賞',  g:'G3', c:'福島', dist:'芝1800', t:'ハンデ3歳', star:3, aim:'済：13-8-5。○⑬1着(レコード)・▲⑧2着＝相手は的中', done:true},
+
+  {d:'2026-07-05', n:'北九州記念',      g:'G3', c:'小倉', dist:'芝1200', t:'ハンデ', star:3, aim:'スプリントハンデ＝大波乱の定番。斤量差・前残りバイアスで穴。回収枠でワイド/3連複の的'},
+  {d:'2026-07-12', n:'七夕賞',          g:'G3', c:'福島', dist:'芝2000', t:'ハンデ', star:3, aim:'夏ハンデの象徴。荒れ頻発＝大妙味候補。地力(指数/近走)で人気薄を拾う'},
+  {d:'2026-07-12', n:'中京記念',        g:'G3', c:'中京', dist:'芝1600', t:'ハンデ', star:3, aim:'マイルハンデ。開催替わり/トラックバイアスで歪み。CLVで賢い金を追う'},
+  {d:'2026-07-19', n:'函館2歳S',        g:'G3', c:'函館', dist:'芝1200', t:'定量', star:1, aim:'薄データ2歳＝低評価方針。原則見送り or ごく薄く'},
+  {d:'2026-07-19', n:'小倉記念',        g:'G3', c:'小倉', dist:'芝2000', t:'ハンデ', star:3, aim:'小倉巧者・先行有利バイアス。ハンデ波乱で穴。地力主軸＋展開'},
+  {d:'2026-07-26', n:'関屋記念',        g:'G3', c:'新潟', dist:'芝1600', t:'別定', star:2, aim:'新潟外回りマイル。差し決着で末脚型に妙味。別定で実力反映寄り'},
+  {d:'2026-07-26', n:'プロキオンS',     g:'G3', c:'中京', dist:'ダ1400', t:'定量', star:2, aim:'ダート短距離。前走度外視(展開不利)組の巻き返し妙味'},
+
+  {d:'2026-08-02', n:'アイビスサマーダッシュ', g:'G3', c:'新潟', dist:'芝1000直', t:'ハンデ', star:3, aim:'直線千m＝特殊条件で大荒れ。外枠/先行バイアス。回収枠の妙味源'},
+  {d:'2026-08-02', n:'クイーンS',       g:'G3', c:'札幌', dist:'芝1800', t:'別定', star:2, aim:'牝馬重賞。秋華賞へのステップ。実力反映寄りだが斤量妙味あり'},
+  {d:'2026-08-09', n:'レパードS',       g:'G3', c:'新潟', dist:'ダ1800', t:'定量', star:2, aim:'3歳ダート。世代未確立で評価難＝歪み。地力(指数)重視で'},
+  {d:'2026-08-09', n:'CBC賞',           g:'G3', c:'中京', dist:'芝1200', t:'ハンデ', star:3, aim:'スプリントハンデ＝大波乱。軽斤量穴。ワイド/3連系で跳ねる組み立て'},
+  {d:'2026-08-16', n:'札幌記念',        g:'G2', c:'札幌', dist:'芝2000', t:'定量', star:1, aim:'夏の古馬最強決定戦。実力反映で堅い＝妙味出にくい。本命の信頼度高'},
+  {d:'2026-08-23', n:'新潟2歳S',        g:'G3', c:'新潟', dist:'芝1600', t:'定量', star:1, aim:'薄データ2歳＝低評価方針。原則見送り'},
+  {d:'2026-08-23', n:'キーンランドC',   g:'G3', c:'札幌', dist:'芝1200', t:'別定', star:2, aim:'スプリンターズSへの前哨。札幌1200の先行バイアス。CLVで賢い金'},
+  {d:'2026-08-30', n:'新潟記念',        g:'G3', c:'新潟', dist:'芝2000', t:'ハンデ', star:3, aim:'夏ハンデ総決算＝大波乱。多頭数で展開カギ。人気薄の地力を拾う大妙味候補'},
+  {d:'2026-08-30', n:'札幌2歳S',        g:'G3', c:'札幌', dist:'芝1800', t:'定量', star:1, aim:'薄データ2歳。原則見送り or 薄く'},
+
+  {d:'2026-09-06', n:'京成杯オータムH', g:'G3', c:'中山', dist:'芝1600', t:'ハンデ', star:3, aim:'秋初週のマイルハンデ。中山巧者・斤量妙味で穴。秋競争の足慣らし'},
+  {d:'2026-09-06', n:'セントウルS',     g:'G2', c:'中京', dist:'芝1200', t:'別定', star:2, aim:'スプリンターズS最重要前哨。仕上げ途上の人気馬に隙＝妙味'},
+  {d:'2026-09-13', n:'紫苑S',           g:'G2', c:'中山', dist:'芝2000', t:'定量', star:1, aim:'秋華賞トライアル(牝)。実力反映寄り。本命信頼'},
+  {d:'2026-09-13', n:'ローズS',         g:'G2', c:'阪神', dist:'芝1800', t:'定量', star:1, aim:'秋華賞トライアル(牝)。仕上げ8分の人気馬に注意も基本堅め'},
+  {d:'2026-09-20', n:'セントライト記念', g:'G2', c:'中山', dist:'芝2200', t:'定量', star:1, aim:'菊花賞トライアル。距離未経験で評価難も実力反映寄り'},
+  {d:'2026-09-21', n:'オールカマー',     g:'G2', c:'中山', dist:'芝2200', t:'定量', star:2, aim:'秋古馬G1へのステップ。状態途上の人気馬・斤量で妙味が出る年あり'},
+  {d:'2026-09-21', n:'神戸新聞杯',       g:'G2', c:'阪神', dist:'芝2400', t:'定量', star:1, aim:'菊花賞/ダービー上位の前哨。堅め。本命信頼'},
+  {d:'2026-09-27', n:'スプリンターズS',  g:'G1', c:'中山', dist:'芝1200', t:'G1定量', star:3, aim:'★秋G1開幕★ 短距離G1は隊列・バイアスで波乱。autumn-watch連携で大妙味を厚く'},
+];
+
+var cal = document.getElementById('cal');
+var today = new Date(); today.setHours(0,0,0,0);
+var MS = 86400000;
+var curMonth = '';
+var wd = ['日','月','火','水','木','金','土'];
+
+R.forEach(function(r){
+  var dp = r.d.split('-');
+  var do_ = new Date(+dp[0], +dp[1]-1, +dp[2]);
+  var diff = Math.round((do_ - today)/MS);
+  var m = dp[1];
+  if(m !== curMonth){
+    curMonth = m;
+    var mh = document.createElement('div');
+    mh.className='mhead'; mh.textContent='▸ 2026年 '+(+m)+'月';
+    cal.appendChild(mh);
+  }
+  // 状態判定
+  var status, scls, badge;
+  if(r.done || diff < -1){ status='済'; scls='done'; badge='🟢'; }
+  else if(diff <= 7){ status='直近'; scls='soon'; badge='🟡'; }
+  else { status='待機'; scls='wait'; badge='⚪'; }
+
+  var el = document.createElement('div');
+  el.className = 'rc' + (scls==='soon'?' next':'') + (scls==='done'?' done':'');
+  var gdcls = r.g==='G1'?'g1':(r.g==='G2'?'g2':'');
+  var stars = '★★★★★★'.slice(0, r.star).padEnd ? null : null;
+  var starStr = ['','★','★★','★★★'][r.star];
+
+  el.innerHTML =
+    '<div class="dt">'+(+dp[1])+'/<b>'+(+dp[2])+'</b><span>('+wd[do_.getDay()]+')</span></div>'+
+    '<div><div class="nm">'+r.n+'<span class="gd '+gdcls+'">'+r.g+'</span></div>'+
+      '<div class="meta2">'+r.c+'・'+r.dist+'・'+r.t+'</div>'+
+      '<div class="aim">'+r.aim+'</div></div>'+
+    '<div class="rt"><div class="star s'+r.star+'">'+starStr+'</div>'+
+      '<div class="st '+scls+'">'+badge+' '+status+'</div></div>';
+  cal.appendChild(el);
+});
+</script>
+</body>
+</html>
