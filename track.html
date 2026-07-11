@@ -84,6 +84,14 @@
     <div class="kpi" id="wfkpi"></div>
     <p class="mut2" id="wfcount" style="font-size:12.5px;margin:6px 0 4px"></p>
     <div id="wfgate" style="background:#0e1a26;border:1px solid var(--line);border-left:4px solid #d4a24b;border-radius:10px;padding:10px 13px;margin:4px 0 8px;font-size:12.5px"></div>
+    <div style="background:#0e1a26;border:1px solid var(--line);border-left:4px solid #2dd4bf;border-radius:10px;padding:10px 13px;margin:4px 0 8px;font-size:12px">
+      <b style="color:#2dd4bf">📖 期末の読み方（凍結対象外＝事前宣言・計測もルールも変えない）</b>
+      <ol style="margin:6px 0 0;padding-left:18px">
+        <li><b>点でなく区間で読む</b>：n=20-30ではポアソン二項の帰無分散√Σpᵢ(1−pᵢ)≈2〜3回(≈9pt)＝完璧に較正されていても実測が申告を8pt超える確率は3割。<b>実ゲート外勝ちが90%CIの外に出た時だけ「系統的歪み」</b>、区間内は<b>判定保留・継続計測</b>。8ptの赤ランプは注意喚起であって確定判定ではない。</li>
+        <li><b>LLは平均だけで読まない</b>：25点平均は1〜2の大穴で反転する。<b>平均・中央値・self勝R数（self LL&lt;mkt LLのレース数）を併記</b>して分布で読む。</li>
+        <li><b>期待値の置き方</b>：20-30Rで確定できるのは<b>「大きく壊れた部品の検出」まで</b>（北九州型の系統的失敗は8〜9pt超で出る＝検出可能）。<b>「市場に勝った証明」には足りない</b>。検出されなければ「少なくとも大破はしていない＝次の30Rへ」。曖昧な数字を「検証失敗」と誤読しない。</li>
+      </ol>
+    </div>
     <div style="overflow-x:auto"><table id="wftbl">
       <thead><tr><th>レース</th><th class="num">記録頭</th><th class="num">残余†</th><th>◎</th><th class="num">◎p_win</th><th class="num">◎市場p*</th><th>勝ち馬</th><th class="num">self LL</th><th class="num">mkt LL</th><th>種別/エッジ</th></tr></thead>
       <tbody id="wfbody"></tbody>
@@ -144,11 +152,16 @@
       var rr= realDone.filter(function(r){return r.ret!=null;});
       var ret= rr.length? rr.reduce(function(s,r){return s+r.ret;},0)/rr.length : null;
       var topHitR= ms.filter(function(m){return m.topHit;}).length/ms.length*100;
+      var diffs=ms.map(function(m){return m.mLL-m.sLL;}); // >0=そのレースはselfが市場に勝ち
+      var wins=diffs.filter(function(d){return d>0;}).length;
+      var srt=diffs.slice().sort(function(a,b){return a-b;});
+      var med=srt.length%2? srt[(srt.length-1)/2] : (srt[srt.length/2-1]+srt[srt.length/2])/2;
       kpi.innerHTML=
-        '<div class="k"><div class="kn">'+avg(function(m){return m.sLL;}).toFixed(2)+'</div><div class="kl">self LL</div></div>'+
-        '<div class="k"><div class="kn">'+avg(function(m){return m.mLL;}).toFixed(2)+'</div><div class="kl">mkt LL</div></div>'+
+        '<div class="k"><div class="kn">'+avg(function(m){return m.sLL;}).toFixed(2)+'</div><div class="kl">self LL平均</div></div>'+
+        '<div class="k"><div class="kn">'+avg(function(m){return m.mLL;}).toFixed(2)+'</div><div class="kl">mkt LL平均</div></div>'+
+        '<div class="k"><div class="kn">'+(med>=0?'+':'')+med.toFixed(2)+'</div><div class="kl">LL差 中央値</div></div>'+
+        '<div class="k"><div class="kn">'+wins+'/'+ms.length+'</div><div class="kl">self勝R数</div></div>'+
         '<div class="k"><div class="kn">'+avg(function(m){return m.bS;}).toFixed(3)+'</div><div class="kl">Brier自</div></div>'+
-        '<div class="k"><div class="kn">'+avg(function(m){return m.bM;}).toFixed(3)+'</div><div class="kl">Brier市場</div></div>'+
         '<div class="k"><div class="kn">'+topHitR.toFixed(0)+'%</div><div class="kl">◎勝率</div></div>'+
         '<div class="k"><div class="kn">'+(ret!=null?ret.toFixed(0)+'%':'—')+'</div><div class="kl">実弾回収</div></div>';
     } else { kpi.innerHTML='<p class="mut2" style="font-size:12px">確定サンプル0＝集計は七夕賞2026の結果から。設計は確定済み。</p>'; }
@@ -156,10 +169,14 @@
     var gate=document.getElementById('wfgate');
     var expl='<b style="color:#d4a24b">🚪 ゲート較正（関門そのものの検証）</b>：残余†＝1−Σp_通過馬＝「勝ち馬がゲートの外にいる」と自分が申告した確率。<b>申告ゲート外率と実ゲート外勝率を突き合わせれば①関門の当否を直接検証</b>（p較正・回収率と独立の第3層）。ゲート外の馬が勝てば self LL に残余の−lnが自動計上＝北九州型(勝ち馬を関門で落とす)が数字で痛む。';
     if(done.length>=1){
-      var dMiss=done.reduce(function(s,r){return s+metrics(r).resid;},0)/done.length*100;
-      var rMiss=done.filter(function(r){return metrics(r).gateMiss;}).length/done.length*100;
-      var verdict = rMiss>dMiss+8? '<b style="color:#ff7a7a">関門が過信＝勝ち馬を落としている（北九州型の再発サイン）</b>' : (rMiss<dMiss-8? '<span style="color:#ffd97a">関門が過小＝候補を絞り過ぎかも</span>' : '<span style="color:#5ee08e">関門はおおむね較正内</span>');
-      gate.innerHTML=expl+'<div style="margin-top:6px">申告ゲート外率 <b>'+dMiss.toFixed(0)+'%</b> ／ 実ゲート外勝率 <b>'+rMiss.toFixed(0)+'%</b>（n='+done.length+'）→ '+verdict+'</div>';
+      var resids=done.map(function(r){return metrics(r).resid;});
+      var expCount=resids.reduce(function(s,x){return s+x;},0);              // 帰無仮説での期待ゲート外勝ち回数
+      var realCount=done.filter(function(r){return metrics(r).gateMiss;}).length;
+      var sd=Math.sqrt(resids.reduce(function(s,x){return s+x*(1-x);},0));   // ポアソン二項の標準偏差
+      var lo=Math.max(0,expCount-1.645*sd), hi=expCount+1.645*sd;           // 90%CI(帰無)
+      var dMiss=expCount/done.length*100, rMiss=realCount/done.length*100;
+      var verdict = (realCount>hi)? '<b style="color:#ff7a7a">実測が90%区間の上外＝関門が系統的に勝ち馬を落とす疑い（北九州型・要精査）</b>' : ((realCount<lo)? '<span style="color:#ffd97a">実測が区間の下外＝候補を絞り過ぎの疑い</span>' : '<span style="color:#5ee08e">実測は90%区間内＝判定保留・継続計測（n='+done.length+'で白黒つかないのは正常）</span>');
+      gate.innerHTML=expl+'<div style="margin-top:6px">期待ゲート外勝ち <b>'+expCount.toFixed(1)+'回</b>（90%CI '+lo.toFixed(1)+'〜'+hi.toFixed(1)+'） ／ 実測 <b>'+realCount+'回</b>（n='+done.length+'・率 申告'+dMiss.toFixed(0)+'%→実'+rMiss.toFixed(0)+'%）→ '+verdict+'</div>';
     } else if(WF.length){
       var sd=WF[0], s0=sd.cands.reduce(function(s,c){return s+c.pwin/100;},0), r0=Math.max(0,1-s0), oth=Math.max(1,sd.N-sd.cands.length);
       gate.innerHTML=expl+'<div style="margin-top:6px" class="mut">確定0＝'+sd.race+'の結果から集計開始。申告ゲート外率＝<b>'+(r0*100).toFixed(0)+'%</b>（勝ち馬がこの'+sd.cands.length+'頭の外なら self LL≈<b>'+(-Math.log(Math.max(1e-4,r0/oth))).toFixed(1)+'</b>が計上）。</div>';
