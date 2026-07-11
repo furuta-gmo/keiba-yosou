@@ -82,12 +82,13 @@
       </ol>
     </div>
     <div class="kpi" id="wfkpi"></div>
-    <p class="mut2" id="wfcount" style="font-size:12.5px;margin:6px 0 8px"></p>
+    <p class="mut2" id="wfcount" style="font-size:12.5px;margin:6px 0 4px"></p>
+    <div id="wfgate" style="background:#0e1a26;border:1px solid var(--line);border-left:4px solid #d4a24b;border-radius:10px;padding:10px 13px;margin:4px 0 8px;font-size:12.5px"></div>
     <div style="overflow-x:auto"><table id="wftbl">
-      <thead><tr><th>レース</th><th class="num">記録頭</th><th>◎</th><th class="num">◎p_win</th><th class="num">◎市場p*</th><th>勝ち馬</th><th class="num">self LL</th><th class="num">mkt LL</th><th>種別/エッジ</th></tr></thead>
+      <thead><tr><th>レース</th><th class="num">記録頭</th><th class="num">残余†</th><th>◎</th><th class="num">◎p_win</th><th class="num">◎市場p*</th><th>勝ち馬</th><th class="num">self LL</th><th class="num">mkt LL</th><th>種別/エッジ</th></tr></thead>
       <tbody id="wfbody"></tbody>
     </table></div>
-    <p class="mut2" style="font-size:12px;margin:8px 0 0">*市場pはオーバーラウンド補正済(Σ=1.0)。LL=log loss(低いほど良/勝ち馬に高pを付けたか)。<b>self LL &lt; mkt LL が続けば「市場超えの気配」</b>（要20-30R）。<b>退屈対策</b>：見送りでも較正データは積み上がる＝"何もしない日"でなく"計測した日"。期末まで記録に徹する。</p>
+    <p class="mut2" style="font-size:12px;margin:8px 0 0">*市場pはオーバーラウンド補正済(Σ=1.0)。<b>†残余＝1−Σp_通過馬＝勝ち馬がゲート外にいる申告確率</b>（通過馬にΣ=1.0を割らず、残余を非通過馬へ頭数割り＝ゲート外勝ちが自動でlog lossに乗る）。LL=log loss(低いほど良)。<b>self LL &lt; mkt LL が続けば「市場超えの気配」</b>（要20-30R）。<b>記録プロトコル</b>：ゲート外の馬が勝った時はその馬のオッズも記録(winnerOdds)＝市場pは実値のまま、ゲート失敗の痛みは自分p側だけに出る。クリップ1e-4は残余方式で理論上の安全弁に後退（平均LLと中央値LLを併記）。<b>退屈対策</b>：見送りでも較正は積み上がる＝"計測した日"。</p>
   </section>
   <script>
   // Winner-First 較正記録。1レース=ゲート通過馬全頭のp_winベクトル。paper:true=見送り(ペーパー)/false=実弾/null=未定。winner=勝ち馬名(cands.hと一致 or 任意)。winnerOdds=winnerがcands外の時のみ。
@@ -113,7 +114,7 @@
       var n=r.cands.length + (wc?0:1);
       var bS=r.cands.reduce(function(s,c){return s+Math.pow(c.pwin/100-(c.h===r.winner?1:0),2);},0) + (wc?0:Math.pow(pSelfW-1,2));
       var bM=r.cands.reduce(function(s,c){return s+Math.pow((1/c.odds)/r.orr-(c.h===r.winner?1:0),2);},0) + (wc?0:Math.pow(pMktW-1,2));
-      return {sLL:sLL,mLL:mLL,bS:bS/n,bM:bM/n,topHit:(r.cands[0]&&r.cands[0].h===r.winner)};
+      return {sLL:sLL,mLL:mLL,bS:bS/n,bM:bM/n,topHit:(r.cands[0]&&r.cands[0].h===r.winner),resid:Math.max(0,1-selfSum),gateMiss:!wc};
     }
     var done=WF.filter(function(r){return r.winner!=null;});
     document.getElementById('wfprog').textContent=done.length;
@@ -127,11 +128,13 @@
     body.innerHTML = WF.length? WF.map(function(r){
       var m=metrics(r); var top=r.cands[0]||{};
       var mktTop=top.odds? ((1/top.odds)/r.orr*100).toFixed(1) : '—';
-      var win=r.winner==null?'<span class="mut">未確定</span>':r.winner;
+      var resid=(Math.max(0,1-r.cands.reduce(function(s,c){return s+c.pwin/100;},0))*100).toFixed(0);
+      var residTxt = (m&&m.gateMiss)? '<b style="color:#ff7a7a">'+resid+'%↯</b>' : resid+'%';
+      var win=r.winner==null?'<span class="mut">未確定</span>':(m&&m.gateMiss?'<b style="color:#ff7a7a">'+r.winner+'(ゲート外)</b>':r.winner);
       var kind=r.paper==null?'—':(r.paper?'<span style="color:#ffd97a">ペーパー</span>':'<span style="color:#5ee08e">実弾</span>');
-      return '<tr><td>'+r.race+'</td><td class="num">'+r.cands.length+'</td><td>'+(top.h||'')+'</td><td class="num">'+(top.pwin||'')+'</td><td class="num">'+mktTop+'</td><td>'+win+'</td>'+
+      return '<tr><td>'+r.race+'</td><td class="num">'+r.cands.length+'</td><td class="num">'+residTxt+'</td><td>'+(top.h||'')+'</td><td class="num">'+(top.pwin||'')+'</td><td class="num">'+mktTop+'</td><td>'+win+'</td>'+
         '<td class="num">'+(m?m.sLL.toFixed(2):'—')+'</td><td class="num">'+(m?m.mLL.toFixed(2):'—')+'</td><td style="font-size:11.5px">'+kind+'<br>'+(r.edge||'')+'</td></tr>';
-    }).join('') : '<tr><td colspan="9" class="mut" style="text-align:center;padding:14px">記録待ち</td></tr>';
+    }).join('') : '<tr><td colspan="10" class="mut" style="text-align:center;padding:14px">記録待ち</td></tr>';
     // KPI
     var kpi=document.getElementById('wfkpi');
     if(done.length>=1){
@@ -149,6 +152,18 @@
         '<div class="k"><div class="kn">'+topHitR.toFixed(0)+'%</div><div class="kl">◎勝率</div></div>'+
         '<div class="k"><div class="kn">'+(ret!=null?ret.toFixed(0)+'%':'—')+'</div><div class="kl">実弾回収</div></div>';
     } else { kpi.innerHTML='<p class="mut2" style="font-size:12px">確定サンプル0＝集計は七夕賞2026の結果から。設計は確定済み。</p>'; }
+    // ゲート較正層（申告残余 vs 実ゲート外勝率）＝関門そのものの検証（p較正と独立）
+    var gate=document.getElementById('wfgate');
+    var expl='<b style="color:#d4a24b">🚪 ゲート較正（関門そのものの検証）</b>：残余†＝1−Σp_通過馬＝「勝ち馬がゲートの外にいる」と自分が申告した確率。<b>申告ゲート外率と実ゲート外勝率を突き合わせれば①関門の当否を直接検証</b>（p較正・回収率と独立の第3層）。ゲート外の馬が勝てば self LL に残余の−lnが自動計上＝北九州型(勝ち馬を関門で落とす)が数字で痛む。';
+    if(done.length>=1){
+      var dMiss=done.reduce(function(s,r){return s+metrics(r).resid;},0)/done.length*100;
+      var rMiss=done.filter(function(r){return metrics(r).gateMiss;}).length/done.length*100;
+      var verdict = rMiss>dMiss+8? '<b style="color:#ff7a7a">関門が過信＝勝ち馬を落としている（北九州型の再発サイン）</b>' : (rMiss<dMiss-8? '<span style="color:#ffd97a">関門が過小＝候補を絞り過ぎかも</span>' : '<span style="color:#5ee08e">関門はおおむね較正内</span>');
+      gate.innerHTML=expl+'<div style="margin-top:6px">申告ゲート外率 <b>'+dMiss.toFixed(0)+'%</b> ／ 実ゲート外勝率 <b>'+rMiss.toFixed(0)+'%</b>（n='+done.length+'）→ '+verdict+'</div>';
+    } else if(WF.length){
+      var sd=WF[0], s0=sd.cands.reduce(function(s,c){return s+c.pwin/100;},0), r0=Math.max(0,1-s0), oth=Math.max(1,sd.N-sd.cands.length);
+      gate.innerHTML=expl+'<div style="margin-top:6px" class="mut">確定0＝'+sd.race+'の結果から集計開始。申告ゲート外率＝<b>'+(r0*100).toFixed(0)+'%</b>（勝ち馬がこの'+sd.cands.length+'頭の外なら self LL≈<b>'+(-Math.log(Math.max(1e-4,r0/oth))).toFixed(1)+'</b>が計上）。</div>';
+    } else { gate.innerHTML=expl; }
   })();
   </script>
 
