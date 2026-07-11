@@ -101,9 +101,9 @@
   <script>
   // Winner-First 較正記録。1レース=ゲート通過馬全頭のp_winベクトル。paper:true=見送り(ペーパー)/false=実弾/null=未定。winner=勝ち馬名(cands.hと一致 or 任意)。winnerOdds=winnerがcands外の時のみ。
   var WF = [
-    // p_winは予想時に固定（後から動かさない）。oddsは7/12朝7:30（市場比較用）。winner=結果確定後に記入。
-    { race:'七夕賞2026', date:'2026-07-12', N:16, orr:1.257, paper:null, edge:'展開(Bコース+前傾で流れる=差し有利)',
-      cands:[ {h:'④カラマ',pwin:17,odds:4.5},{h:'⑯サヴォ',pwin:15,odds:6.7},{h:'⑮ヤマニン',pwin:11,odds:9.1},{h:'⑩センツ',pwin:9,odds:15.8},{h:'⑪アスク',pwin:8,odds:5.5},{h:'⑬バトル',pwin:7,odds:7.0} ],
+    // p_winは結果を見た後は動かさない。ただし発走前の馬場の階級変化(§9-3)は例外更新可＝良→稍重で道悪適性を反映して更新。oddsは7/12朝7:30。
+    { race:'七夕賞2026', date:'2026-07-12', N:16, orr:1.257, paper:null, edge:'馬場(良→稍重で道悪血統が過小評価)',
+      cands:[ {h:'④カラマ',pwin:15,odds:4.5},{h:'⑮ヤマニン',pwin:14,odds:9.1},{h:'⑯サヴォ',pwin:14,odds:6.7},{h:'⑩センツ',pwin:9,odds:15.8},{h:'⑥マイネル',pwin:8,odds:12.6},{h:'⑪アスク',pwin:6,odds:5.5} ],
       winner:null, winnerOdds:null, ret:null }
   ];
   (function(){
