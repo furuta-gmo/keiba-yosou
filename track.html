@@ -68,50 +68,87 @@
   <section id="fwd" style="border-color:var(--gold)"></section>
 
   <section id="wfcal" style="border-color:#d4a24b">
-    <h2><span class="no" style="background:#d4a24b;color:#1a1206">🏆</span>Winner-First 較正記録（p_win vs 結果・評価ウィンドウ）</h2>
+    <h2><span class="no" style="background:#d4a24b;color:#1a1206">🏆</span>Winner-First 較正記録（計測設計を凍結前に確定）</h2>
     <div class="banner" style="display:flex;gap:11px;align-items:flex-start;background:rgba(212,162,75,.08);border:1px solid #6b561f;border-radius:12px;padding:13px 15px;margin:6px 0 10px">
       <span style="font-size:19px">⏱</span>
-      <div><b style="color:#d4a24b">評価ウィンドウ宣言（凍結中）</b>：Winner-First(v3.0)は<b>2026-07-12開始・20〜30レースを1期</b>とし、期末まで§13ルールの改変を凍結（明白なバグ修正を除く）。<b>的中率・回収率・較正(Brier)を"別々に"判定</b>。n=2から作ったルールゆえ過学習を警戒し、感触で弄らない。<span class="mut" style="font-size:12px">進捗 <b id="wfprog">0</b>/20-30 レース。</span></div>
+      <div><b style="color:#d4a24b">評価ウィンドウ宣言（凍結中）</b>：Winner-First(v3.0)は<b>2026-07-12開始・20〜30レースを1期</b>とし、期末まで§13ルールの改変を凍結（明白なバグ修正を除く）。<b>較正・的中率・回収率を"別々に"判定</b>。<span class="mut" style="font-size:12px">確定 <b id="wfprog">0</b>/20-30 レース。</span></div>
     </div>
-    <p class="mut2" style="font-size:12.5px;margin:0 0 8px"><b>Brierスコア</b>＝Σ(p_win − 結果)² / n（結果=1着なら1・他0）。低いほど較正が良い。<b>参考</b>：全馬に市場pを付けた時のBrierを下回れば「市場超えの気配」（要サンプル）。的中率・回収率とは別軸で評価。</p>
+    <div style="background:#0e1a26;border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin:0 0 10px;font-size:12.5px">
+      <b style="color:#d4a24b">計測設計（レビュー#1〜#3を反映＝凍結前に確定）</b>
+      <ol style="margin:6px 0 0;padding-left:18px">
+        <li><b>市場pはオーバーラウンド補正</b>：mkt_i = (1/オッズ_i) ÷ Σ(1/オッズ)（全頭）。単勝控除で合計≈1.25になる歪みを除去＝自分p(Σ=1.0)と公平に比較。</li>
+        <li><b>ゲート通過馬"全頭"のp_winベクトルを記録</b>し、勝ち馬へのlog loss（−ln p_勝ち馬）＝1レースから3〜6点の情報。Brierも全頭で算出。◎1頭だけの評価はサンプル薄すぎ。</li>
+        <li><b>見送り(ペーパー)レースも必ず記録</b>：較正はペーパー含む全レース、回収率は実弾のみ、と別集計。選択バイアスを防ぎ「見送り判定は正しかったか(仮想成績)」も検証。</li>
+      </ol>
+    </div>
     <div class="kpi" id="wfkpi"></div>
+    <p class="mut2" id="wfcount" style="font-size:12.5px;margin:6px 0 8px"></p>
     <div style="overflow-x:auto"><table id="wftbl">
-      <thead><tr><th>レース</th><th>◎馬</th><th class="num">◎p_win</th><th class="num">市場p</th><th>結果(着)</th><th>的中</th><th class="num">回収</th><th>エッジ源泉</th></tr></thead>
+      <thead><tr><th>レース</th><th class="num">記録頭</th><th>◎</th><th class="num">◎p_win</th><th class="num">◎市場p*</th><th>勝ち馬</th><th class="num">self LL</th><th class="num">mkt LL</th><th>種別/エッジ</th></tr></thead>
       <tbody id="wfbody"></tbody>
     </table></div>
-    <p class="mut2" style="font-size:12px;margin:8px 0 0">※各レース確定後に1行追記（◎のp_win・市場p・着順・的中/回収・エッジの源泉）。サンプルが貯まればBrier/的中率/回収率を自動集計。<b>期末(20-30R)まではルール改変せず記録に徹する</b>。</p>
+    <p class="mut2" style="font-size:12px;margin:8px 0 0">*市場pはオーバーラウンド補正済(Σ=1.0)。LL=log loss(低いほど良/勝ち馬に高pを付けたか)。<b>self LL &lt; mkt LL が続けば「市場超えの気配」</b>（要20-30R）。<b>退屈対策</b>：見送りでも較正データは積み上がる＝"何もしない日"でなく"計測した日"。期末まで記録に徹する。</p>
   </section>
   <script>
-  // Winner-First 較正記録（レース確定ごとに1行追加）。p_win=◎の勝つ確率(%)、mkt=◎の市場p(%)、fin=◎の着順(0=着外扱いは99)、hit=馬券的中(true/false)、ret=回収率(%)、edge=エッジ源泉
+  // Winner-First 較正記録。1レース=ゲート通過馬全頭のp_winベクトル。paper:true=見送り(ペーパー)/false=実弾/null=未定。winner=勝ち馬名(cands.hと一致 or 任意)。winnerOdds=winnerがcands外の時のみ。
   var WF = [
-    // 例: {race:'七夕賞2026', horse:'④カラマ', pwin:17, mkt:17, fin:null, hit:null, ret:null, edge:'展開(前傾で流れる)'},
+    { race:'七夕賞2026', date:'2026-07-12', N:16, orr:1.256, paper:null, edge:'展開(Bコース+前傾で流れる=差し有利)',
+      cands:[ {h:'④カラマ',pwin:17,odds:4.7},{h:'⑯サヴォ',pwin:15,odds:5.7},{h:'⑮ヤマニン',pwin:11,odds:8.3},{h:'⑩センツ',pwin:9,odds:19.4},{h:'⑪アスク',pwin:8,odds:5.3},{h:'⑬バトル',pwin:7,odds:7.8} ],
+      winner:null, winnerOdds:null, ret:null }
   ];
   (function(){
-    var done = WF.filter(function(r){return r.fin!=null;});
-    document.getElementById('wfprog').textContent = done.length;
-    var body=document.getElementById('wfbody');
-    if(!WF.length){ body.innerHTML='<tr><td colspan="8" class="mut" style="text-align:center;padding:14px">記録待ち（七夕賞2026から開始）。各レース確定後に1行追記します。</td></tr>'; }
-    else {
-      body.innerHTML = WF.map(function(r){
-        var fin = r.fin==null?'—':(r.fin==99?'着外':r.fin+'着');
-        var hit = r.hit==null?'—':(r.hit?'<span style="color:#5ee08e">的中</span>':'<span style="color:#ffb27a">不的中</span>');
-        var ret = r.ret==null?'—':r.ret+'%';
-        return '<tr><td>'+r.race+'</td><td>'+r.horse+'</td><td class="num">'+r.pwin+'</td><td class="num">'+r.mkt+'</td><td>'+fin+'</td><td>'+hit+'</td><td class="num">'+ret+'</td><td style="font-size:12px">'+(r.edge||'')+'</td></tr>';
-      }).join('');
+    var LOGFLOOR=1e-4;
+    function metrics(r){
+      if(r.winner==null) return null;
+      var others = Math.max(1, r.N - r.cands.length);
+      var selfSum = r.cands.reduce(function(s,c){return s+c.pwin/100;},0);
+      var selfRes = Math.max(0.005, 1-selfSum)/others;
+      var mktSum = r.cands.reduce(function(s,c){return s+(1/c.odds)/r.orr;},0);
+      var mktRes = Math.max(0.002, 1-mktSum)/others;
+      var wc = r.cands.filter(function(c){return c.h===r.winner;})[0];
+      var pSelfW = wc? wc.pwin/100 : selfRes;
+      var pMktW  = wc? (1/wc.odds)/r.orr : (r.winnerOdds? (1/r.winnerOdds)/r.orr : mktRes);
+      var sLL=-Math.log(Math.max(LOGFLOOR,pSelfW)), mLL=-Math.log(Math.max(LOGFLOOR,pMktW));
+      // Brier: 記録馬＋勝ち馬(cands外なら加算)
+      var n=r.cands.length + (wc?0:1);
+      var bS=r.cands.reduce(function(s,c){return s+Math.pow(c.pwin/100-(c.h===r.winner?1:0),2);},0) + (wc?0:Math.pow(pSelfW-1,2));
+      var bM=r.cands.reduce(function(s,c){return s+Math.pow((1/c.odds)/r.orr-(c.h===r.winner?1:0),2);},0) + (wc?0:Math.pow(pMktW-1,2));
+      return {sLL:sLL,mLL:mLL,bS:bS/n,bM:bM/n,topHit:(r.cands[0]&&r.cands[0].h===r.winner)};
     }
+    var done=WF.filter(function(r){return r.winner!=null;});
+    document.getElementById('wfprog').textContent=done.length;
+    // counters
+    var real=WF.filter(function(r){return r.paper===false;}).length;
+    var paper=WF.filter(function(r){return r.paper===true;}).length;
+    var pend=WF.filter(function(r){return r.winner==null;}).length;
+    document.getElementById('wfcount').innerHTML='総 <b>'+WF.length+'</b>R ／ 実弾 <b>'+real+'</b> ／ 見送り(ペーパー) <b>'+paper+'</b> ／ 未確定 <b>'+pend+'</b>　<span class="mut">※較正は全R・回収は実弾のみ</span>';
+    // table
+    var body=document.getElementById('wfbody');
+    body.innerHTML = WF.length? WF.map(function(r){
+      var m=metrics(r); var top=r.cands[0]||{};
+      var mktTop=top.odds? ((1/top.odds)/r.orr*100).toFixed(1) : '—';
+      var win=r.winner==null?'<span class="mut">未確定</span>':r.winner;
+      var kind=r.paper==null?'—':(r.paper?'<span style="color:#ffd97a">ペーパー</span>':'<span style="color:#5ee08e">実弾</span>');
+      return '<tr><td>'+r.race+'</td><td class="num">'+r.cands.length+'</td><td>'+(top.h||'')+'</td><td class="num">'+(top.pwin||'')+'</td><td class="num">'+mktTop+'</td><td>'+win+'</td>'+
+        '<td class="num">'+(m?m.sLL.toFixed(2):'—')+'</td><td class="num">'+(m?m.mLL.toFixed(2):'—')+'</td><td style="font-size:11.5px">'+kind+'<br>'+(r.edge||'')+'</td></tr>';
+    }).join('') : '<tr><td colspan="9" class="mut" style="text-align:center;padding:14px">記録待ち</td></tr>';
+    // KPI
     var kpi=document.getElementById('wfkpi');
     if(done.length>=1){
-      var brier = done.reduce(function(s,r){var o=(r.fin===1?1:0); return s+Math.pow(r.pwin/100-o,2);},0)/done.length;
-      var mbrier = done.reduce(function(s,r){var o=(r.fin===1?1:0); return s+Math.pow(r.mkt/100-o,2);},0)/done.length;
-      var hitr = done.filter(function(r){return r.hit;}).length/done.length*100;
-      var avgret = done.filter(function(r){return r.ret!=null;});
-      var rr = avgret.length? avgret.reduce(function(s,r){return s+r.ret;},0)/avgret.length : null;
-      kpi.innerHTML =
-        '<div class="k"><div class="kn">'+brier.toFixed(3)+'</div><div class="kl">Brier(自p)</div></div>'+
-        '<div class="k"><div class="kn">'+mbrier.toFixed(3)+'</div><div class="kl">Brier(市場)</div></div>'+
-        '<div class="k"><div class="kn">'+hitr.toFixed(0)+'%</div><div class="kl">的中率</div></div>'+
-        '<div class="k"><div class="kn">'+(rr!=null?rr.toFixed(0)+'%':'—')+'</div><div class="kl">平均回収</div></div>';
-    } else { kpi.innerHTML='<p class="mut2" style="font-size:12px">確定サンプル0＝集計は次レース以降。</p>'; }
+      var ms=done.map(metrics);
+      var avg=function(f){return ms.reduce(function(s,m){return s+f(m);},0)/ms.length;};
+      var realDone=WF.filter(function(r){return r.paper===false&&r.winner!=null;});
+      var rr= realDone.filter(function(r){return r.ret!=null;});
+      var ret= rr.length? rr.reduce(function(s,r){return s+r.ret;},0)/rr.length : null;
+      var topHitR= ms.filter(function(m){return m.topHit;}).length/ms.length*100;
+      kpi.innerHTML=
+        '<div class="k"><div class="kn">'+avg(function(m){return m.sLL;}).toFixed(2)+'</div><div class="kl">self LL</div></div>'+
+        '<div class="k"><div class="kn">'+avg(function(m){return m.mLL;}).toFixed(2)+'</div><div class="kl">mkt LL</div></div>'+
+        '<div class="k"><div class="kn">'+avg(function(m){return m.bS;}).toFixed(3)+'</div><div class="kl">Brier自</div></div>'+
+        '<div class="k"><div class="kn">'+avg(function(m){return m.bM;}).toFixed(3)+'</div><div class="kl">Brier市場</div></div>'+
+        '<div class="k"><div class="kn">'+topHitR.toFixed(0)+'%</div><div class="kl">◎勝率</div></div>'+
+        '<div class="k"><div class="kn">'+(ret!=null?ret.toFixed(0)+'%':'—')+'</div><div class="kl">実弾回収</div></div>';
+    } else { kpi.innerHTML='<p class="mut2" style="font-size:12px">確定サンプル0＝集計は七夕賞2026の結果から。設計は確定済み。</p>'; }
   })();
   </script>
 
