@@ -101,10 +101,11 @@
   <script>
   // Winner-First 較正記録。1レース=ゲート通過馬全頭のp_winベクトル。paper:true=見送り(ペーパー)/false=実弾/null=未定。winner=勝ち馬名(cands.hと一致 or 任意)。winnerOdds=winnerがcands外の時のみ。
   var WF = [
-    // p_winは結果を見た後は動かさない。ただし発走前の馬場の階級変化(§9-3)は例外更新可＝良→稍重で道悪適性を反映して更新。oddsは7/12朝7:30。
+    // 結果=稍重・1着⑪アスク(2人気)/2着⑥マイネル/3着⑨オニャン(14人気)。paper=見送り扱い(実際に張ったならfalse+ret記入)。
+    // 診断: 勝ち馬⑪はゲート内(最下位6%評価)=ゲート層は保持も、当舞台[1.1.1.0]の"具体的コース実績"を"父の道悪傾向"という推測overlayで割引=p層の失敗。市場は⑪を14.5%評価で我々を上回る(self LL 2.8 > 市場 1.9)。一方⑥道悪格上げは的中=道悪の読み自体は正しかった。
     { race:'七夕賞2026', date:'2026-07-12', N:16, orr:1.257, paper:true, edge:'馬場(良→稍重で道悪血統が過小評価)／結果⑪→⑥→⑨・稍重',
       cands:[ {h:'④カラマ',pwin:15,odds:4.5},{h:'⑮ヤマニン',pwin:14,odds:9.1},{h:'⑯サヴォ',pwin:14,odds:6.7},{h:'⑩センツ',pwin:9,odds:15.8},{h:'⑥マイネル',pwin:8,odds:12.6},{h:'⑪アスク',pwin:6,odds:5.5} ],
-      winner:'⑪アスク', winnerOdds:null, ret:null }
+      winner:'⑪アスク', winnerOdds:5.0, ret:null }
   ];
   (function(){
     var LOGFLOOR=1e-4;
@@ -188,6 +189,16 @@
   <section id="lessons" style="border-color:#d4604f">
     <h2><span class="no" style="background:#d4604f">📓</span>教訓ログ（反省→ルール化）</h2>
     <p class="mut" style="font-size:12.5px">レースごとの反省を「次の予想で守るルール」に変換して記録。<b>ここに書いた項目はCLAUDE.md（私の予想指示書）§9〜12に反映済＝次レースから自動適用</b>。下の「反映先」のツールで実際に運用する。</p>
+
+    <div style="background:var(--card2);border:1px solid var(--line);border-left:4px solid #8fd3ff;border-radius:11px;padding:12px 14px;margin:10px 0">
+      <b style="color:#8fd3ff">2026-07-12 七夕賞（稍重 ／ 結果 ⑪→⑥→⑨ ／ Winner-First期の第1データ点）</b>
+      <ol style="font-size:13px;margin:8px 0 0;padding-left:20px;line-height:1.6">
+        <li><b style="color:#8fd3ff">【メタ・パターンの再々発＝最重要】具体的な"当舞台実績"を、推測の"overlay"で割引いて勝ち馬を献上</b>：1着<b>⑪アスク(2番人気)</b>は当舞台<b>[1.1.1.0]＝この福島芝2000で連対率100%の具体実績</b>を持つのに、稍重版で「父シルバーステート＝道悪割引＋逃げ競られ」という<b>推測のoverlayで最下位評価(p_win6%)まで割引</b>＝実質消し。北九州の⑫(道悪未経験で消し)と<b>同型＝「具体実績のある馬を、推測の血統/展開の話で切る」</b>。<span class="mut">教訓：当舞台実績・直近の具体的な好走は、父系の道悪傾向や想定展開という"推測overlay"より上位に置く。ソフトなoverlayでハード実績馬を"賭け線の下"まで落とさない（消去ホワイトリスト§13-Bの精神を"格下げ・順位付け"にも拡張）。</span></li>
+        <li><b style="color:#5ee08e">【新手法が効いた面＝過学習で全否定しない】馬場と道悪血統の読みは正しかった</b>：良→<b>稍重の馬場急変を事前に的中</b>させ、道悪血統の<b>▲⑥マイネル(父ゴールドシップ×ロージズインメイ)を格下げから妙味の芯に格上げ→2着</b>。市場(6番人気)より高く評価して当てた＝<b>Winner-Firstの馬場エッジは機能した</b>。誤りは「道悪読みを⑪アスクにまで過剰適用したこと」に局在＝手法の全否定ではなく適用の一点補正。</li>
+        <li><b>【較正装置の初仕事】市場に負けた1点として正しく記録</b>：勝ち馬⑪への log loss は<b>自分2.8 &gt; 市場1.9＝この1戦は市場が上</b>（我々は勝ち馬をゲート内最下位に置いた）。ゲート層は保持（⑪⑥とも6頭のゲート内・3着⑨のみ外）＝<b>候補選びは合っていたが順位付け(p層)で失敗</b>。装置が設計通り「どの部品が壊れたか(=p層)」を指し示した。</li>
+        <li><b style="color:#ffb27a">【規律＝ここで根本再構築しない】</b>これはWinner-First期の<b>n=1</b>。しかも馬場エッジは的中し、ゲートも保持＝<b>手法が壊れている証拠ではない</b>。感情で「根本から作り直す」のは、我々が凍結と読み方の規律で防ごうとした当のもの。<b>本項は教訓ログとして記録し、§13の改変は評価ウィンドウ(20-30R)末まで凍結</b>。上記①の"具体実績＞推測overlay"は次戦から運用で徹底（§9-4の再徹底＝新ルールでなく既存原則の再強調ゆえ凍結に抵触せず）。</li>
+      </ol>
+    </div>
 
     <div style="background:var(--card2);border:1px solid var(--line);border-left:4px solid #d4604f;border-radius:11px;padding:12px 14px;margin:10px 0">
       <b style="color:#ffb27a">2026-07-12 七夕賞（結果 ⑪→⑥→⑨ ／ 軸総崩れ・Winner-First v3.0 forward-test 確定サンプル①）</b>
