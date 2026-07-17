@@ -1,6 +1,6 @@
 /* 競馬予想PWA Service Worker
    バージョンを上げる(=CACHEを変える)と、次回オンライン時に更新が反映されます。 */
-const CACHE = 'keiba-yosou-v89';
+const CACHE = 'keiba-yosou-v90';
 
 const ASSETS = [
   './',
@@ -39,7 +39,19 @@ const ASSETS = [
   './2026-07-05_kitakyushu-kinen/analysis/9_騎手.html',
   './2026-07-05_kitakyushu-kinen/analysis/10_当日.html',
   './2026-07-19_kokura-kinen/prediction.html',
+  './2026-07-19_kokura-kinen/odds.html',
+  './2026-07-19_kokura-kinen/research.html',
   './2026-07-19_kokura-kinen/style.css',
+  './2026-07-19_kokura-kinen/analysis/1_展開予想.html',
+  './2026-07-19_kokura-kinen/analysis/2_血統.html',
+  './2026-07-19_kokura-kinen/analysis/3_近走成績.html',
+  './2026-07-19_kokura-kinen/analysis/4_コース馬場.html',
+  './2026-07-19_kokura-kinen/analysis/5_オッズ分析.html',
+  './2026-07-19_kokura-kinen/analysis/6_調教.html',
+  './2026-07-19_kokura-kinen/analysis/7_指数.html',
+  './2026-07-19_kokura-kinen/analysis/8_データ傾向.html',
+  './2026-07-19_kokura-kinen/analysis/9_騎手.html',
+  './2026-07-19_kokura-kinen/analysis/10_当日.html',
   './2026-07-12_tanabata-sho/prediction.html',
   './2026-07-12_tanabata-sho/odds.html',
   './2026-07-12_tanabata-sho/research.html',
