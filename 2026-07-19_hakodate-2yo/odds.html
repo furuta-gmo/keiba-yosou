@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>オッズ計算機 — 函館2歳ステークス2026</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  .oddsrow input{width:72px;background:#0e1a26;border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:6px 8px;font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+  .oddsrow input:focus{outline:none;border-color:var(--acc)}
+  .ev{font-weight:800;font-variant-numeric:tabular-nums}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+  .btn{background:#0e1a26;border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer}
+  .btn:hover{border-color:var(--acc)} .btn.primary{background:rgba(45,212,191,.15);border-color:var(--acc);color:#7ef0bd}
+  .stamp{color:var(--mut);font-size:12px}
+  .sumcard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:10px}
+  .sumcard h4{margin:0 0 8px;color:var(--acc2);font-size:14px}
+  .pill{display:inline-block;background:#0e1a26;border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin:3px 4px 0 0;font-size:13px}
+  .pill b{color:#fff} th.small,td.small{padding:7px 6px;font-size:12.5px}
+</style>
+<meta name="theme-color" content="#102132">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('../sw.js')})}</script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="prediction.html">← 予想に戻る</a>
+  <header class="hero">
+    <span class="race-tag">オッズ計算機 / 函館2歳ステークス2026</span>
+    <h1>最新オッズで再計算 🧮</h1>
+    <div class="sub">単勝オッズを入れると旧EV(自分p×単勝)・妙味が即更新。<b style="color:#ffd97a">現在はオッズ発表前＝空欄。想定勝率pは枠順後の暫定値。</b>オッズが出たら貼り付け欄に出馬表を貼れば一括反映。最終判定は<a href="../bet.html">⚖勝負判定</a>で。</div>
+  </header>
+  <section>
+    <div class="controls">
+      <button class="btn primary" id="sortBtn">妙味順に並べ替え ⇅</button>
+      <button class="btn" id="resetBtn">推定値に戻す</button>
+      <span class="stamp" id="stamp"></span>
+    </div>
+    <div class="sumcard" style="margin:0 0 12px;border-color:var(--gold)">
+      <h4>📋 出馬表(単勝オッズ)を貼り付けて一括反映</h4>
+      <textarea id="paste" rows="4" style="width:100%;box-sizing:border-box;background:#0b1119;border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:10px;font-size:12px" placeholder="単勝オッズ表を貼り付け → 下の「反映」"></textarea>
+      <div style="margin-top:8px"><button class="btn primary" id="importBtn">貼り付けたオッズを反映 ↧</button> <span class="stamp" id="importMsg"></span></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table id="tbl">
+      <thead><tr><th class="small">馬</th><th class="small num">想定勝率%</th><th class="small num">単勝</th><th class="small num">旧EV</th><th class="small">判定</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    </div>
+  </section>
+  <section>
+    <h2><span class="no">▸</span>サマリー（自動更新）</h2>
+    <div class="sumcard"><h4>🟢 妙味TOP＝相手で厚くしたい馬</h4><div id="topValue"></div></div>
+    <div class="sumcard"><h4>🔴 過剰人気＝軸/単勝は避ける馬</h4><div id="overbet"></div></div>
+  </section>
+  <footer>オッズ計算機 / 函館2歳ステークス2026（🤖自律ループ生成） ｜ <a href="prediction.html">予想へ</a><br>※想定勝率pは枠順後の暫定。オッズが出たら貼付で反映。</footer>
+</div>
+<script>
+(function(){
+  // 函館2歳ステークス2026 馬番順。o=想定オッズ（⑪シグレ2.1のみ準確定・他は暫定）。p=枠順後の暫定自分p
+  // 2歳=薄データ。実オッズ発表後に貼付で上書き。Winner-First: ⑪当舞台V軸+素質相手+内枠先行妙味
+  var BASE = [
+    {name:'ダマスク',            p:3,  o:30.0},
+    {name:'ダイシンドラゴン',    p:8,  o:9.0},   // △内枠(2枠)先行の妙味・丹内
+    {name:'セタキト',            p:2,  o:40.0},
+    {name:'アルテクィーン',      p:1,  o:50.0},
+    {name:'フェリチタ',          p:7,  o:12.0},  // △父タワーオブロンドン(短距離)・妙味
+    {name:'ウンスイ',            p:1,  o:60.0},
+    {name:'ショウナンカノア',    p:6,  o:15.0},  // 押さえ・池添
+    {name:'クロリス',            p:2,  o:45.0},
+    {name:'イモージェン',        p:11, o:6.5},   // ▲父サリオス・佐々木=素質相手
+    {name:'ノリヤンモーニン',    p:1,  o:55.0},
+    {name:'シグレ',              p:30, o:2.1},   // ◎同舞台6馬身差V・武豊・予想1番人気(単勝EVは薄=複/ワイド軸)
+    {name:'ダイメイビッグボス',  p:16, o:4.5},   // ○父サートゥルナーリア・新馬勝ち・素質上位=連対軸
+    {name:'ロンドンガーズ',      p:5,  o:18.0}   // 押さえ・北村友
+  ];
+  var KEY='hakodate-2yo-2026-odds-v1';
+  var state={}, sortByEv=false;
+  function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); state=s.data||{}; if(s.t)stamp(s.t);}catch(e){state={};} }
+  function save(){ var t=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify({data:state,t:t})); }catch(e){} stamp(t); }
+  function stamp(t){ var d=new Date(t), z=function(x){return ('0'+x).slice(-2);};
+    document.getElementById('stamp').textContent='最終更新 '+(d.getMonth()+1)+'/'+d.getDate()+' '+z(d.getHours())+':'+z(d.getMinutes()); }
+  function val(h){ var s=state[h.name]||{}; return { p: s.p!=null? s.p : h.p, o: s.o!=null? s.o : h.o }; }
+  function ev(h){ var v=val(h); return (v.p/100)*(v.o||0); }
+  function judge(e){ if(e>=1.10) return {t:'妙味(買い)', c:'t-buy'}; if(e>=1.00) return {t:'やや妙味', c:'t-buy'};
+    if(e>=0.85) return {t:'中', c:'t-mut'}; return {t:'過剰/待ち', c:'t-red'}; }
+  function render(){
+    var rows=BASE.slice(); if(sortByEv) rows.sort(function(a,b){ return ev(b)-ev(a); });
+    var tb=document.getElementById('tbody'); tb.innerHTML='';
+    rows.forEach(function(h){ var v=val(h), e=ev(h), j=judge(e);
+      var tr=document.createElement('tr'); tr.className='oddsrow';
+      tr.innerHTML='<td class="small">'+h.name+'</td>'+
+        '<td class="small num"><input inputmode="decimal" data-k="p" data-n="'+h.name+'" value="'+v.p+'"></td>'+
+        '<td class="small num"><input inputmode="decimal" data-k="o" data-n="'+h.name+'" value="'+v.o+'"></td>'+
+        '<td class="small num ev" style="color:'+(e>=1.10?'#7ef0bd':e<0.85?'#ffb27a':'#e8eef5')+'">'+e.toFixed(2)+'</td>'+
+        '<td class="small"><span class="tag '+j.c+'">'+j.t+'</span></td>';
+      tb.appendChild(tr); });
+    bindInputs(); summary();
+  }
+  function bindInputs(){ document.querySelectorAll('#tbody input').forEach(function(inp){
+      inp.addEventListener('input', function(){ var n=inp.getAttribute('data-n'), k=inp.getAttribute('data-k'), num=parseFloat(inp.value);
+        state[n]=state[n]||{}; state[n][k]= isNaN(num)? null : num; save(); render(); }); }); }
+  function summary(){
+    var byEv=BASE.slice().sort(function(a,b){return ev(b)-ev(a);});
+    var top=byEv.filter(function(h){return ev(h)>=1.0;}).slice(0,5);
+    document.getElementById('topValue').innerHTML = top.length? top.map(function(h){ return '<span class="pill"><b>'+h.name+'</b> EV '+ev(h).toFixed(2)+'</span>'; }).join('') : '<span class="mut">オッズ未入力＝妙味は発表後</span>';
+    var pop=BASE.slice().filter(function(h){return val(h).o;}).sort(function(a,b){return val(a).o-val(b).o;}).slice(0,6);
+    var over=pop.filter(function(h){return ev(h)<0.85;});
+    document.getElementById('overbet').innerHTML = over.length? over.map(function(h){ return '<span class="pill"><b>'+h.name+'</b> EV '+ev(h).toFixed(2)+'</span>'; }).join('') : '<span class="mut">オッズ未入力</span>';
+  }
+  function importPaste(){
+    var txt=document.getElementById('paste').value||''; var n=0;
+    BASE.forEach(function(h){ var idx=txt.indexOf(h.name);
+      if(idx>=0){ var after=txt.slice(idx+h.name.length); var m=after.match(/(\d{1,4}(?:\.\d+)?)/);
+        if(m){ var o=parseFloat(m[1]); if(!isNaN(o)&&o>0){ state[h.name]=state[h.name]||{}; state[h.name].o=o; n++; } } } });
+    save(); render();
+    document.getElementById('importMsg').textContent=n+'頭のオッズを反映';
+  }
+  document.getElementById('importBtn').addEventListener('click', importPaste);
+  document.getElementById('sortBtn').addEventListener('click', function(){ sortByEv=!sortByEv; render(); });
+  document.getElementById('resetBtn').addEventListener('click', function(){ if(confirm('入力を推定既定値に戻しますか？')){ state={}; save(); render(); } });
+  load(); render();
+})();
+</script>
+</body>
+</html>
