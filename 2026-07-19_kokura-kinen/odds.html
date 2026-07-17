@@ -60,27 +60,28 @@
 <script>
 (function(){
   // 小倉記念2026 馬番順。o=オッズ発表前は空欄。p=枠順後の暫定自分p(Winner-First・当舞台実績優先)
+  // o=金13:00予想オッズ。p=Stage C自分p(Winner-First・当舞台実績優先/1人気⑰は過信せず)
   var BASE = [
-    {name:'ゼンダンハヤブサ',  p:2,  o:''},
-    {name:'タガノアビー',      p:3,  o:''},
-    {name:'ナムラエイハブ',    p:4,  o:''},
-    {name:'コパノサントス',    p:2,  o:''},
-    {name:'エヒト',            p:7,  o:''},   // 2023当レースV・9歳58
-    {name:'ガイアメンテ',      p:12, o:''},   // ◎決め手・川田
-    {name:'トータルクラリティ',p:2,  o:''},
-    {name:'サフィラ',          p:9,  o:''},   // ▲G2覇者・軽ハンデ・妙味
-    {name:'ジーティーアダマン',p:9,  o:''},   // ○4歳上昇・松山
-    {name:'マイネルメモリー',  p:3,  o:''},
-    {name:'カネフラ',          p:2,  o:''},
-    {name:'ケイズレーヴ',      p:3,  o:''},
-    {name:'カエルム',          p:4,  o:''},   // Mデムーロ・軽ハンデ
-    {name:'ウエストナウ',      p:7,  o:''},   // △追い切りA最上位・妙味
-    {name:'テーオーソラネル',  p:5,  o:''},
-    {name:'ノーランサンライズ',p:2,  o:''},
-    {name:'ジョバンニ',        p:8,  o:''},   // 人気想定も追切C+・当舞台未知・8枠=過信せず
-    {name:'レーゼドラマ',      p:11, o:''}    // ◎小倉2000V・逃げ・軽ハンデ
+    {name:'ゼンダンハヤブサ',  p:2,  o:20.0},
+    {name:'タガノアビー',      p:4,  o:8.2},   // 市場4人気だが我々データ薄=押さえ
+    {name:'ナムラエイハブ',    p:3,  o:35.6},
+    {name:'コパノサントス',    p:1,  o:106.6},
+    {name:'エヒト',            p:6,  o:27.2},  // ▲2023当レースV・blendEV1.13
+    {name:'ガイアメンテ',      p:15, o:4.3},   // ○地力本命・川田(人気で圧縮0.74)
+    {name:'トータルクラリティ',p:1,  o:384.7},
+    {name:'サフィラ',          p:10, o:25.5},  // ▲G2覇者=妙味最大blendEV1.49
+    {name:'ジーティーアダマン',p:11, o:4.2},   // co-fav圧縮0.66
+    {name:'マイネルメモリー',  p:2,  o:52.4},
+    {name:'カネフラ',          p:2,  o:62.6},
+    {name:'ケイズレーヴ',      p:2,  o:124.4},
+    {name:'カエルム',          p:3,  o:26.1},  // Mデムーロ
+    {name:'ウエストナウ',      p:7,  o:14.5},  // △追い切りA
+    {name:'テーオーソラネル',  p:3,  o:151.9},
+    {name:'ノーランサンライズ',p:2,  o:60.9},
+    {name:'ジョバンニ',        p:9,  o:4.2},   // 🔪1人気だがblendEV0.63=過剰(追切C+/当舞台未知/8枠)
+    {name:'レーゼドラマ',      p:13, o:12.3}   // ◎小倉2000V・逃げ・軽ハンデ=+EV1.12の的中軸
   ];
-  var KEY='kokura-kinen-2026-odds-v1';
+  var KEY='kokura-kinen-2026-odds-v2';
   var state={}, sortByEv=false;
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); state=s.data||{}; if(s.t)stamp(s.t);}catch(e){state={};} }
   function save(){ var t=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify({data:state,t:t})); }catch(e){} stamp(t); }
