@@ -253,6 +253,17 @@
       <p class="mut" style="font-size:12px;margin:8px 0 0"><b>①〜③のいずれか未達なら手法を根本から作り直す（延命禁止）。</b>3つ全て達成で初めて「較正は市場並み＋自傷を止めた＋当てを金に換えられる」＝秋の実弾に進む資格。</p>
     </div>
 
+    <div style="background:rgba(143,179,255,.06);border:1px solid #3b5a8a;border-radius:11px;padding:12px 14px;margin:10px 0">
+      <b style="color:#8fb3ff">🎛 先行指標2本（読み専用・運ゼロ・kill/goのゲートにしない）</b>
+      <p class="mut" style="font-size:12px;margin:6px 0 8px">結果指標(①②③)は運を含みnが遅い。<b>行動</b>を測る先行指標を分離＝<b>(a)は②の・(b)は③の先行指標</b>。行動を直せば結果が付いてくる、を読むための計器。<b style="color:#ffb27a">数値目標は置かない(方向のみ)。期中は数字が悪くても手を動かさない＝記録のみ</b>（閾値/§13/§14/p付けへフィードバック禁止＝追補§1「毎敗ごとの新ルール増築＝§13-C自己違反＝過学習」の再来を防ぐ）。</p>
+      <div class="kpi" id="ftlead"></div>
+      <div style="font-size:11.5px;margin-top:8px;line-height:1.75">
+        <b>(a) ゲート保持率【membership・判定余地ゼロ】</b>：市場4番人気以内(採用オッズ基準)の全頭を勝ち候補ゲートに残せたか。1頭でも消/非候補ならN。分母＝全レース。<b style="color:#ffb27a">被覆境界</b>：ゲート内順位は問わない＝"残すが最下位に置く"軟弱過小は(a)では捕まらず②とp較正が測る（例：マーキュリー⑬＝membership Yだが②発火）。(a)を"最下位に置かない"まで厳格化するかは<b>ユーザー批准事項</b>＝期中は現定義で固定。<br>
+        <b>(b) 構築準拠率【2026-07-21凍結・期中再交渉禁止】</b>：買い目が §9-5(複数軸・軸1頭依存の回避) かつ §13-3(二層＝的中本命層＋妙味相手層) を満たすか。分母＝買い目を構築した全回(ペーパー含む・<b>結果非条件</b>)。見送り(非構築)は分母外。判定は買い目"構造"のみ＝的中/回収は参照しない（例：小倉＝負けでも二層構築ゆえY）。<br>
+        <span class="mut2">†現8戦は遡及ゆえ一部"—"（(a)=全馬オッズ未保持／(b)=見送りで非構築）。次レース以降は毎回Y/Nで即記録＝運ゼロでnが最速に伸びる純アクション率。</span>
+      </div>
+    </div>
+
     <div style="background:rgba(45,212,191,.06);border:1px solid #1f5a52;border-radius:11px;padding:12px 14px;margin:10px 0">
       <b style="color:#2dd4bf">🍂 秋G1 実弾ゲート（事前登録・週次とは別立て）</b>
       <p class="mut" style="font-size:12px;margin:6px 0 8px">利益は週次のハンデ量産でなく<b>年数回の大妙味G1スポット</b>から出る（2025＝天皇賞秋5万→25万・有馬10万→60万＝5〜6倍＝人気薄の高確信ヒット）。<b style="color:#ffb27a">ただしその2勝の"どの馬・どの根拠"は本リポジトリに未記録＝後付けで美化・解剖しない（それ自体が§14-1違反）。真の解剖には当時の買い目データが要る＝要提供。</b> 代わりに"厚く張ってよい条件"を先に数値で固定する：</p>
@@ -270,15 +281,16 @@
     (function(){
       // 一本化台帳：勝ち馬の自分p(selfPW)と市場p((1/wOdds)/orr)を全戦同一計算。
       // cut=安い切り捨て(勝ち馬を消/ゲート外/最下位に置いた)。moneyMiss=読みは近い(勝ち馬/上位を印)のに◎順位or買い方で+回収に繋げられず。honFin=◎の着。paper=見送り。
+      // gateKeep=(a)市場4番人気以内を全頭ゲート(候補)に残せたか Y/N/null(全馬オッズ未保持で未確定)。buildOK=(b)買い目が§9-5(複数軸)かつ§13-3(二層)か Y/N/null(見送り=非構築で対象外)。※(a)(b)は読み専用の先行指標=kill/goゲートにしない・期中フィードバック禁止。
       var LG=[
-        {d:'6/28',race:'函館記念',    N:15, winner:'②ファウスト', wOdds:11.1, orr:1.259, selfPW:0.090, hon:'⑧ケイ',  honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  note:'▲☆穴で1-2-3着を全て印も◎○が別馬＝順序ミス'},
-        {d:'6/28',race:'ラジオNIKKEI', N:16, winner:'⑬サノノ',    wOdds:7.0,  orr:1.258, selfPW:0.173, hon:'⑮バドリ', honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  note:'勝ち馬は自分の○(self17%>市場)＝当てたのに◎を別馬にして回収逃す'},
-        {d:'7/1', race:'帝王賞',       N:13, winner:'⑧ミッキー',  wOdds:1.9,  orr:1.272, selfPW:0.310, hon:'⑧ミッキー',honFin:'1着', cut:false, moneyMiss:false, paper:true,  note:'◎=勝ち馬だが1.9倍=妙味なしで正しく見送り(方法どおり)'},
-        {d:'7/5', race:'北九州記念',   N:13, winner:'⑫フリッカー', wOdds:3.3,  orr:1.259, selfPW:0.110, hon:'⑤アブキ', honFin:'圏外', cut:true,  moneyMiss:false, paper:true,  note:'1番人気⑫を"消"＝安い切り捨ての典型(自分p11%でも印を切った)'},
-        {d:'7/12',race:'七夕賞',       N:16, winner:'⑪アスク',    wOdds:5.5,  orr:1.257, selfPW:0.060, hon:'④カラマ', honFin:'圏外', cut:true,  moneyMiss:false, paper:true,  note:'市場2番人気⑪をゲート最下位p6%(市場14.5%)＝安い切り捨て'},
-        {d:'7/19',race:'小倉記念',     N:18, winner:'①ゼンダン',  wOdds:27.7, orr:1.2548,selfPW:0.030, hon:'⑱レーゼ', honFin:'3着(複)',cut:true, moneyMiss:false, paper:true, note:'軽ハンデ穴①をゲート外＝取りこぼし。◎⑱は複勝のみ確保'},
-        {d:'7/19',race:'函館2歳S',     N:13, winner:'⑤フェリチタ', wOdds:31.9, orr:1.2689,selfPW:0.060, hon:'⑪シグレ', honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  note:'勝ち馬⑤を市場超えで格上げ(self6%>市場2.5%)＝深掘り成功も軸1頭依存で全滅'},
-        {d:'7/20',race:'マーキュリーC',N:14, winner:'⑬サンデー',  wOdds:8.9,  orr:1.2582,selfPW:0.040, hon:'⑪ムルソー',honFin:'—(⑪2着)',cut:true, moneyMiss:false, paper:true, note:'4番人気⑬をp4%(ゲート最下位)＝斤量で安い切り捨て'}
+        {d:'6/28',race:'函館記念',    N:15, winner:'②ファウスト', wOdds:11.1, orr:1.259, selfPW:0.090, hon:'⑧ケイ',  honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  gateKeep:'N', buildOK:null, note:'▲☆穴で1-2-3着を全て印も◎○が別馬＝順序ミス／(a)N:市場1人気⑭(6.3)を消'},
+        {d:'6/28',race:'ラジオNIKKEI', N:16, winner:'⑬サノノ',    wOdds:7.0,  orr:1.258, selfPW:0.173, hon:'⑮バドリ', honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  gateKeep:'N', buildOK:null, note:'勝ち馬は自分の○(self17%>市場)＝当てたのに◎を別馬に／(a)N:市場1人気⑤(5.8)を消'},
+        {d:'7/1', race:'帝王賞',       N:13, winner:'⑧ミッキー',  wOdds:1.9,  orr:1.272, selfPW:0.310, hon:'⑧ミッキー',honFin:'1着', cut:false, moneyMiss:false, paper:true,  gateKeep:'Y', buildOK:null, note:'◎=勝ち馬だが1.9倍=妙味なしで正しく見送り／(a)Y:top4全て候補内'},
+        {d:'7/5', race:'北九州記念',   N:13, winner:'⑫フリッカー', wOdds:3.3,  orr:1.259, selfPW:0.110, hon:'⑤アブキ', honFin:'圏外', cut:true,  moneyMiss:false, paper:true,  gateKeep:'N', buildOK:null, note:'1番人気⑫を"消"＝安い切り捨て／(a)N:⑫3.3・④7.8・⑨8.6を消'},
+        {d:'7/12',race:'七夕賞',       N:16, winner:'⑪アスク',    wOdds:5.5,  orr:1.257, selfPW:0.060, hon:'④カラマ', honFin:'圏外', cut:true,  moneyMiss:false, paper:true,  gateKeep:null,buildOK:null, note:'市場2番人気⑪をゲート最下位p6%(市場14.5%)＝安い切り捨て／(a)—:全馬オッズ未保持=要確認'},
+        {d:'7/19',race:'小倉記念',     N:18, winner:'①ゼンダン',  wOdds:27.7, orr:1.2548,selfPW:0.030, hon:'⑱レーゼ', honFin:'3着(複)',cut:true, moneyMiss:false, paper:true, gateKeep:'N', buildOK:'Y', note:'軽ハンデ穴①をゲート外＝取りこぼし。◎⑱複勝のみ／(a)N:市場4人気②(6.4)が候補外／(b)Y:⑱⑥軸+妙味相手+複=二層構築(結果は負でも構造は準拠)'},
+        {d:'7/19',race:'函館2歳S',     N:13, winner:'⑤フェリチタ', wOdds:31.9, orr:1.2689,selfPW:0.060, hon:'⑪シグレ', honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  gateKeep:null,buildOK:'N', note:'勝ち馬⑤を市場超えで格上げ的中も軸1頭依存で全滅／(a)—:全馬オッズ未保持／(b)N:軸1頭依存=§9-5違反'},
+        {d:'7/20',race:'マーキュリーC',N:14, winner:'⑬サンデー',  wOdds:8.9,  orr:1.2582,selfPW:0.040, hon:'⑪ムルソー',honFin:'—(⑪2着)',cut:true, moneyMiss:false, paper:true, gateKeep:'Y', buildOK:'N', note:'4番人気⑬をp4%(最下位)＝安い切り捨て／(a)Y-membership:⑬は候補内に残す(但し最下位=被覆境界)／(b)N:⑨中心に崩壊'}
       ];
       function mkt(r){ return (1/r.wOdds)/r.orr; }
       function llS(r){ return -Math.log(Math.max(1e-4,r.selfPW)); }
@@ -323,6 +335,17 @@
       var readRaces=LG.filter(function(r){return r.moneyMiss||r.honFin==='1着';}).length; // 読みが勝ち馬/上位に届いたR
       var moneyOK=LG.filter(function(r){return r.honFin==='1着'&&!r.paper;}).length; // 実弾で+回収= 現状0(全ペーパー)
       document.getElementById('k3now').innerHTML='<b>0%</b> (読み到達'+readRaces+'R中 回収成功0)'+' <span class="bad">未</span>';
+      // 先行指標(a)(b)：読み専用・運ゼロ・kill/goゲートにしない・数値目標なし(方向のみ)
+      var aDet=LG.filter(function(r){return r.gateKeep==='Y'||r.gateKeep==='N';});
+      var aY=aDet.filter(function(r){return r.gateKeep==='Y';}).length;
+      var bDet=LG.filter(function(r){return r.buildOK==='Y'||r.buildOK==='N';});
+      var bY=bDet.filter(function(r){return r.buildOK==='Y';}).length;
+      var aPct=aDet.length? Math.round(aY/aDet.length*100):null;
+      var bPct=bDet.length? Math.round(bY/bDet.length*100):null;
+      document.getElementById('ftlead').innerHTML=
+        '<div class="k" style="border-color:#3b5a8a"><div class="kn" style="color:#8fb3ff">'+(aPct!=null?aPct+'%':'—')+'</div><div class="kl">(a)ゲート保持率 '+aY+'/'+aDet.length+' <span class="mut2">→②の先行</span></div></div>'+
+        '<div class="k" style="border-color:#3b5a8a"><div class="kn" style="color:#8fb3ff">'+(bPct!=null?bPct+'%':'—')+'</div><div class="kl">(b)構築準拠率 '+bY+'/'+bDet.length+' <span class="mut2">→③の先行</span></div></div>'+
+        '<div class="k"><div class="kn">'+(LG.length-aDet.length)+' / '+(LG.length-bDet.length)+'</div><div class="kl">(a)/(b) 遡及未確定†</div></div>';
     })();
     </script>
   </section>
