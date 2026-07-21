@@ -111,7 +111,7 @@
       cands:[ {h:'⑥ガイア',pwin:15,odds:5.9},{h:'⑱レーゼ',pwin:13,odds:16.0},{h:'⑨ジーティー',pwin:11,odds:6.0},{h:'⑧サフィラ',pwin:10,odds:19.6},{h:'⑰ジョバンニ',pwin:9,odds:3.4},{h:'⑤エヒト',pwin:6,odds:17.6} ],
       winner:'①ゼンダンハヤブサ', winnerOdds:27.7, ret:null },
     // 函館2歳S(7/19)Stage D=当日朝オッズ・重馬場。結果⑤フェリチタ(10人気)→⑨イモージェン(2人気)→②ダイシン(8人気)。1-2-3着すべて自分の印(△⑤相手・▲⑨・押さえ②)=候補選び(ゲート)は的中。勝ち馬⑤の自分p6%は市場2.5%より高評価=道悪妙味の読みは市場に勝った。だが◎⑪シグレ(1人気)着外で買い目を⑪軸に集中させ全滅=§9-5「軸1頭依存」を守れず(pは勝ったが買い目で回収を落とした)。
-    { race:'函館2歳S2026', date:'2026-07-19', N:13, orr:1.2689, paper:true, edge:'重馬場で道悪逃げ⑤を妙味に格上げ(p6%>市場2.5%)＝候補選びは市場に勝つも軸1頭依存で回収落とす',
+    { race:'函館2歳S2026', date:'2026-07-19', N:13, orr:1.2689, paper:true, edge:'負け・回収マイナス(軸1頭依存で全滅＝§9-5違反)。※勝ち馬⑤は市場超えで格上げ的中(self6%>市場2.5%)＝敗因は較正でなく買い方=軸B',
       cands:[ {h:'⑪シグレ',pwin:25,odds:3.2},{h:'⑬ロンドンガーズ',pwin:17,odds:4.7},{h:'⑫ダイメイ',pwin:14,odds:10.0},{h:'⑨イモージェン',pwin:13,odds:4.2},{h:'⑤フェリチタ',pwin:6,odds:31.9},{h:'⑦ショウナンカノア',pwin:6,odds:15.0} ],
       winner:'⑤フェリチタ', winnerOdds:null, ret:null },
     // マーキュリーC(7/20・良)結果⑬サンデー(4人気57kg)→⑪ムルソー(1人気)→⑧ギュルヴィ(3人気)。1着⑬は自分p4%(ゲート最下位)=57kgを嫌い紐に軽視=トップハンデの重賞常連を斤量で消した(§9-4違反・軽ハンデ穴取りこぼしの鏡像)。◎連軸⑪2着・▲⑧3着は的中も、CLV軸に据えた⑨(正CLV4.3→3.2)が着外=CLV過信で買い目が⑨中心に崩壊。⑪-⑧ワイド¥300のみ的中の大敗。
@@ -232,6 +232,99 @@
       </ol>
       <p class="mut" style="font-size:12px;margin:8px 0 0">＝守れているかは次の10レースで<b>「勝ち馬がゲート最下位/圏外」率</b>と<b>self LL vs mkt LL勝率</b>で機械判定。改善が数字で出なければ手法を根本から作り直す。</p>
     </div>
+  </section>
+
+  <section id="ftledger" style="border-color:#8fb3ff">
+    <h2><span class="no" style="background:#3b6fd4">📒</span>forward-test 一本化台帳（FWD＋WF＝全8戦・美化なし・自動判定）</h2>
+    <p class="mut" style="font-size:12.5px;margin:2px 0 8px">FWD(6/28〜7/5の4戦)とWF(7/12〜7/20の4戦)を1台帳に統合。<b>勝ち馬の自分p vs 市場p</b>を全戦で同一計算し、"勝敗・LL・敗因軸"を数値から自動生成（叙述で美化できない）。<b style="color:#8fb3ff">重要な事実</b>：8戦で <b>self-LL平均 ≈ mkt-LL平均（ほぼ互角）</b>＝「市場に系統的に劣る」わけではない。負けの正体は下の2軸。</p>
+    <div style="overflow-x:auto"><table id="ftbody"></table></div>
+    <div class="kpi" id="ftkpi" style="margin-top:10px"></div>
+
+    <div id="ftaxis" style="background:#0e1a26;border:1px solid var(--line);border-left:4px solid #8fb3ff;border-radius:10px;padding:11px 14px;margin:10px 0;font-size:12.5px"></div>
+
+    <div style="background:rgba(255,77,77,.06);border:1px solid #7a2f2f;border-radius:11px;padding:12px 14px;margin:10px 0">
+      <b style="color:#ff9a8a">🎯 kill / go 事前登録（数値・後から動かさない）</b>
+      <p class="mut" style="font-size:12px;margin:6px 0 8px">§14-5「改善が数字で出なければ根本から作り直す」の"改善"を、逃げ道が出ないよう数値で先に固定する。<b>対象＝次の10レース（台帳を n=8 → 18 に）。全てペーパー（実弾は下の秋G1ゲートのみ）。</b></p>
+      <table class="bt"><thead><tr><th>指標</th><th>現在(n=8)</th><th class="num">GO基準(期末)</th></tr></thead><tbody>
+        <tr><td>① 較正：self-LL平均 − mkt-LL平均</td><td id="k1now">—</td><td class="num">≤ 0（市場と同等以上）</td></tr>
+        <tr><td>② 安い切り捨て率（勝ち馬を消/ゲート外/最下位）</td><td id="k2now">—</td><td class="num">≤ 20%</td></tr>
+        <tr><td>③ 読み的中→回収 成功率（Axis-2の反転）</td><td id="k3now">—</td><td class="num">≥ 50%</td></tr>
+      </tbody></table>
+      <p class="mut" style="font-size:12px;margin:8px 0 0"><b>①〜③のいずれか未達なら手法を根本から作り直す（延命禁止）。</b>3つ全て達成で初めて「較正は市場並み＋自傷を止めた＋当てを金に換えられる」＝秋の実弾に進む資格。</p>
+    </div>
+
+    <div style="background:rgba(45,212,191,.06);border:1px solid #1f5a52;border-radius:11px;padding:12px 14px;margin:10px 0">
+      <b style="color:#2dd4bf">🍂 秋G1 実弾ゲート（事前登録・週次とは別立て）</b>
+      <p class="mut" style="font-size:12px;margin:6px 0 8px">利益は週次のハンデ量産でなく<b>年数回の大妙味G1スポット</b>から出る（2025＝天皇賞秋5万→25万・有馬10万→60万＝5〜6倍＝人気薄の高確信ヒット）。<b style="color:#ffb27a">ただしその2勝の"どの馬・どの根拠"は本リポジトリに未記録＝後付けで美化・解剖しない（それ自体が§14-1違反）。真の解剖には当時の買い目データが要る＝要提供。</b> 代わりに"厚く張ってよい条件"を先に数値で固定する：</p>
+      <ol style="font-size:12.5px;margin:6px 0 0;padding-left:20px;line-height:1.7">
+        <li><b>bet.html 最大ブレンドEV ≥ 1.25</b>（既定閾値・緩めない）。</li>
+        <li><b>エッジの源泉が §13-D＝展開/隊列/レース質で1行に言える</b>。地力/血統/クラスの再推定由来なら張らない（市場が価格化済み）。</li>
+        <li><b>締切に向け当該馬が正CLV</b>（人気上昇＝賢い金と同方向）。負CLVなら軸にしない（§10-4）。</li>
+        <li><b>上の kill/go を通過済み</b>（self-LL≤mkt が数字で確認できている）。未通過なら秋も実弾ゼロ。</li>
+        <li><b>レース質が本命型 or 明確な妙味構造</b>（難解型は見送り）。</li>
+      </ol>
+      <p class="mut" style="font-size:12px;margin:8px 0 0"><b>5つ全AND のみ実弾＝年数回。</b>1レース資金≤20%・fractional Kelly（§10-6）。週次は全てペーパー＝較正練習に徹する（＝退屈だが利益源はここではない）。</p>
+    </div>
+
+    <script>
+    (function(){
+      // 一本化台帳：勝ち馬の自分p(selfPW)と市場p((1/wOdds)/orr)を全戦同一計算。
+      // cut=安い切り捨て(勝ち馬を消/ゲート外/最下位に置いた)。moneyMiss=読みは近い(勝ち馬/上位を印)のに◎順位or買い方で+回収に繋げられず。honFin=◎の着。paper=見送り。
+      var LG=[
+        {d:'6/28',race:'函館記念',    N:15, winner:'②ファウスト', wOdds:11.1, orr:1.259, selfPW:0.090, hon:'⑧ケイ',  honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  note:'▲☆穴で1-2-3着を全て印も◎○が別馬＝順序ミス'},
+        {d:'6/28',race:'ラジオNIKKEI', N:16, winner:'⑬サノノ',    wOdds:7.0,  orr:1.258, selfPW:0.173, hon:'⑮バドリ', honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  note:'勝ち馬は自分の○(self17%>市場)＝当てたのに◎を別馬にして回収逃す'},
+        {d:'7/1', race:'帝王賞',       N:13, winner:'⑧ミッキー',  wOdds:1.9,  orr:1.272, selfPW:0.310, hon:'⑧ミッキー',honFin:'1着', cut:false, moneyMiss:false, paper:true,  note:'◎=勝ち馬だが1.9倍=妙味なしで正しく見送り(方法どおり)'},
+        {d:'7/5', race:'北九州記念',   N:13, winner:'⑫フリッカー', wOdds:3.3,  orr:1.259, selfPW:0.110, hon:'⑤アブキ', honFin:'圏外', cut:true,  moneyMiss:false, paper:true,  note:'1番人気⑫を"消"＝安い切り捨ての典型(自分p11%でも印を切った)'},
+        {d:'7/12',race:'七夕賞',       N:16, winner:'⑪アスク',    wOdds:5.5,  orr:1.257, selfPW:0.060, hon:'④カラマ', honFin:'圏外', cut:true,  moneyMiss:false, paper:true,  note:'市場2番人気⑪をゲート最下位p6%(市場14.5%)＝安い切り捨て'},
+        {d:'7/19',race:'小倉記念',     N:18, winner:'①ゼンダン',  wOdds:27.7, orr:1.2548,selfPW:0.030, hon:'⑱レーゼ', honFin:'3着(複)',cut:true, moneyMiss:false, paper:true, note:'軽ハンデ穴①をゲート外＝取りこぼし。◎⑱は複勝のみ確保'},
+        {d:'7/19',race:'函館2歳S',     N:13, winner:'⑤フェリチタ', wOdds:31.9, orr:1.2689,selfPW:0.060, hon:'⑪シグレ', honFin:'圏外', cut:false, moneyMiss:true,  paper:true,  note:'勝ち馬⑤を市場超えで格上げ(self6%>市場2.5%)＝深掘り成功も軸1頭依存で全滅'},
+        {d:'7/20',race:'マーキュリーC',N:14, winner:'⑬サンデー',  wOdds:8.9,  orr:1.2582,selfPW:0.040, hon:'⑪ムルソー',honFin:'—(⑪2着)',cut:true, moneyMiss:false, paper:true, note:'4番人気⑬をp4%(ゲート最下位)＝斤量で安い切り捨て'}
+      ];
+      function mkt(r){ return (1/r.wOdds)/r.orr; }
+      function llS(r){ return -Math.log(Math.max(1e-4,r.selfPW)); }
+      function llM(r){ return -Math.log(Math.max(1e-4,mkt(r))); }
+      // table
+      var head='<thead><tr><th>日</th><th>レース</th><th>勝ち馬(自p/市場p)</th><th class="num">self LL</th><th class="num">mkt LL</th><th>◎</th><th>自動判定(敗因軸)</th></tr></thead>';
+      var rows=LG.map(function(r){
+        var sw=r.selfPW>=mkt(r);
+        var verdict = r.honFin==='1着' ? '<span class="good">◎的中(見送り正解)</span>'
+          : (r.cut? '<b style="color:#ff7a7a">A:安い切り捨て</b>'
+          : (r.moneyMiss? '<b style="color:#ffb27a">B:読み○だが◎順位/買い方で落とす</b>'
+          : '<span class="mut2">—</span>'));
+        return '<tr><td>'+r.d+'</td><td>'+r.race+'</td><td>'+r.winner+' <span class="mut2">('+(r.selfPW*100).toFixed(1)+'/'+(mkt(r)*100).toFixed(1)+'%)</span></td>'+
+          '<td class="num'+(sw?' good':'')+'">'+llS(r).toFixed(2)+'</td><td class="num'+(!sw?' good':'')+'">'+llM(r).toFixed(2)+'</td>'+
+          '<td>'+r.hon+' <span class="mut2">'+r.honFin+'</span></td><td style="font-size:11.5px">'+verdict+'<br><span class="mut2">'+r.note+'</span></td></tr>';
+      }).join('');
+      document.getElementById('ftbody').innerHTML=head+'<tbody>'+rows+'</tbody>';
+      // KPI(2軸)
+      var n=LG.length;
+      var sllAvg=LG.reduce(function(s,r){return s+llS(r);},0)/n;
+      var mllAvg=LG.reduce(function(s,r){return s+llM(r);},0)/n;
+      var selfWins=LG.filter(function(r){return r.selfPW>=mkt(r);}).length;
+      var honHits=LG.filter(function(r){return r.honFin==='1着';}).length;
+      var cutN=LG.filter(function(r){return r.cut;}).length;
+      var mmN=LG.filter(function(r){return r.moneyMiss;}).length;
+      document.getElementById('ftkpi').innerHTML=
+        '<div class="k"><div class="kn">'+honHits+'/'+n+'</div><div class="kl">◎的中</div></div>'+
+        '<div class="k"><div class="kn">'+sllAvg.toFixed(2)+' / '+mllAvg.toFixed(2)+'</div><div class="kl">self / mkt LL平均</div></div>'+
+        '<div class="k"><div class="kn">'+selfWins+'/'+n+'</div><div class="kl">較正が市場以上</div></div>'+
+        '<div class="k" style="border-color:#7a2f2f"><div class="kn" style="color:#ff9a8a">'+cutN+'/'+n+'</div><div class="kl">A:安い切り捨て</div></div>'+
+        '<div class="k" style="border-color:#7a5a2f"><div class="kn" style="color:#ffb27a">'+mmN+'/'+n+'</div><div class="kl">B:読み○でも回収失敗</div></div>';
+      // 2軸診断文
+      document.getElementById('ftaxis').innerHTML=
+        '<b style="color:#8fb3ff">■ 敗因は"市場に劣る"ではなく2軸</b>：self-LL平均 <b>'+sllAvg.toFixed(2)+'</b> vs 市場 <b>'+mllAvg.toFixed(2)+'</b>（差 '+(sllAvg-mllAvg>=0?'+':'')+(sllAvg-mllAvg).toFixed(2)+'）＝<b>ほぼ互角</b>。較正が市場以上のレースも '+selfWins+'/'+n+'。'+
+        '<br><b style="color:#ff9a8a">軸A（'+cutN+'/'+n+'）＝安い切り捨て</b>：市場が上位評価する馬を薄根拠で消/ゲート外/最下位に置き、勝たれてLLを爆発させる（北九州⑫消・七夕⑪・マーキュリー⑬・小倉①）。§14が潰しにかかった軸。'+
+        '<br><b style="color:#ffb27a">軸B（'+mmN+'/'+n+'）＝読みは合っているのに回収を落とす</b>：勝ち馬や上位を印しているのに◎順位が別馬／軸1頭依存で買い目が外れる（函館記念=1-2-3印も◎別馬・ラジオ=勝ち馬は○・函館2歳=市場超え格上げが的中も軸依存で全滅）。<b>これは新ルール不要＝既存の§9-5(軸1頭依存回避)・§13-3(二層構造)を"実行"していないだけ</b>。'+
+        '<br><b>結論</b>：夏の当面の目標は「エッジ発見(moonshot)」でなく、<b>①軸Aを止めて較正を市場と同等に固める＋②軸Bの買い方を§9-5/§13-3どおり実行する</b>＝どちらも達成可能で測定可能。';
+      // kill/go 現在値
+      document.getElementById('k1now').innerHTML='<b>'+(sllAvg-mllAvg>=0?'+':'')+(sllAvg-mllAvg).toFixed(2)+'</b>'+(sllAvg-mllAvg<=0?' <span class="good">達</span>':' <span class="bad">未</span>');
+      document.getElementById('k2now').innerHTML='<b>'+Math.round(cutN/n*100)+'%</b> ('+cutN+'/'+n+')'+(cutN/n<=0.20?' <span class="good">達</span>':' <span class="bad">未</span>');
+      // 軸Bのうち回収成功=読み的中Rで+回収に繋げた数。現状は函館2歳=当てたが全滅等で0成功。読み的中R=軸B該当+◎的中
+      var readRaces=LG.filter(function(r){return r.moneyMiss||r.honFin==='1着';}).length; // 読みが勝ち馬/上位に届いたR
+      var moneyOK=LG.filter(function(r){return r.honFin==='1着'&&!r.paper;}).length; // 実弾で+回収= 現状0(全ペーパー)
+      document.getElementById('k3now').innerHTML='<b>0%</b> (読み到達'+readRaces+'R中 回収成功0)'+' <span class="bad">未</span>';
+    })();
+    </script>
   </section>
 
   <section id="lessons" style="border-color:#d4604f">
