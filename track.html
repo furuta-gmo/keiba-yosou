@@ -238,6 +238,7 @@
     <h2><span class="no" style="background:#3b6fd4">📒</span>forward-test 一本化台帳（FWD＋WF＝全8戦・美化なし・自動判定）</h2>
     <p class="mut" style="font-size:12.5px;margin:2px 0 8px">FWD(6/28〜7/5の4戦)とWF(7/12〜7/20の4戦)を1台帳に統合。<b>勝ち馬の自分p vs 市場p</b>を全戦で同一計算し、"勝敗・LL・敗因軸"を数値から自動生成（叙述で美化できない）。<b style="color:#8fb3ff">重要な事実</b>：8戦で <b>self-LL平均 ≈ mkt-LL平均（ほぼ互角）</b>＝「市場に系統的に劣る」わけではない。負けの正体は下の2軸。</p>
     <div style="overflow-x:auto"><table id="ftbody"></table></div>
+    <p class="mut2" style="font-size:11px;margin:4px 0 0">†<b>self LL=−ln(自p)、mkt LL=−ln(市場p)、市場p=(1/オッズ)/Σ(1/オッズ)</b>。<b style="color:#ff9a8a">LL差(自−市)&gt;0＝そのRは自分が市場に負け</b>。行の(自p/市場p)%とこの式で各LLは手元検算可（例：北九州 自11%→2.21／市場24.1%→1.42／差+0.79）。全8戦のraw入力(selfPW/オッズ/orr)はページ内LG配列に保持＝台帳を信頼せず独立再現できる。</p>
     <div class="kpi" id="ftkpi" style="margin-top:10px"></div>
 
     <div id="ftaxis" style="background:#0e1a26;border:1px solid var(--line);border-left:4px solid #8fb3ff;border-radius:10px;padding:11px 14px;margin:10px 0;font-size:12.5px"></div>
@@ -296,7 +297,7 @@
       function llS(r){ return -Math.log(Math.max(1e-4,r.selfPW)); }
       function llM(r){ return -Math.log(Math.max(1e-4,mkt(r))); }
       // table
-      var head='<thead><tr><th>日</th><th>レース</th><th>勝ち馬(自p/市場p)</th><th class="num">self LL</th><th class="num">mkt LL</th><th>◎</th><th>自動判定(敗因軸)</th></tr></thead>';
+      var head='<thead><tr><th>日</th><th>レース</th><th>勝ち馬(自p/市場p)</th><th class="num">self LL</th><th class="num">mkt LL</th><th class="num">LL差(自−市)†</th><th>◎</th><th>自動判定(敗因軸)</th></tr></thead>';
       var rows=LG.map(function(r){
         var sw=r.selfPW>=mkt(r);
         var verdict = r.honFin==='1着' ? '<span class="good">◎的中(見送り正解)</span>'
@@ -304,7 +305,7 @@
           : (r.moneyMiss? '<b style="color:#ffb27a">B:読み○だが◎順位/買い方で落とす</b>'
           : '<span class="mut2">—</span>'));
         return '<tr><td>'+r.d+'</td><td>'+r.race+'</td><td>'+r.winner+' <span class="mut2">('+(r.selfPW*100).toFixed(1)+'/'+(mkt(r)*100).toFixed(1)+'%)</span></td>'+
-          '<td class="num'+(sw?' good':'')+'">'+llS(r).toFixed(2)+'</td><td class="num'+(!sw?' good':'')+'">'+llM(r).toFixed(2)+'</td>'+
+          '<td class="num'+(sw?' good':'')+'">'+llS(r).toFixed(2)+'</td><td class="num'+(!sw?' good':'')+'">'+llM(r).toFixed(2)+'</td>'+'<td class="num" style="color:'+(llS(r)-llM(r)>0?'#ff9a8a':'#5ee08e')+'">'+((llS(r)-llM(r))>=0?'+':'')+(llS(r)-llM(r)).toFixed(2)+'</td>'+
           '<td>'+r.hon+' <span class="mut2">'+r.honFin+'</span></td><td style="font-size:11.5px">'+verdict+'<br><span class="mut2">'+r.note+'</span></td></tr>';
       }).join('');
       document.getElementById('ftbody').innerHTML=head+'<tbody>'+rows+'</tbody>';
@@ -352,7 +353,7 @@
 
   <section id="lessons" style="border-color:#d4604f">
     <h2><span class="no" style="background:#d4604f">📓</span>教訓ログ（反省→ルール化）</h2>
-    <p class="mut" style="font-size:12.5px"><b style="color:#ff9a8a">※以下は経緯の記録。ただし上の冷徹スコアカードのとおり"新ルールの量産"自体が過学習＝次に活きていない。以後は新ルールを増やさず§9-4/§10-4の順守と市場逆張りの凍結で運用する。</b></p>
+    <p class="mut" style="font-size:12.5px"><b style="color:#ff9a8a">※以下は経緯の記録。ただし上の冷徹スコアカードのとおり"新ルールの量産"自体が過学習＝次に活きていない。以後は新ルールを増やさず§9-4/§10-4の順守と市場逆張りの凍結で運用する。<br>＜注意＝各項が「当たった読み」「候補選び＝完璧」「新手法が効いた」等の肯定で始まるのは §14-1 が禁じた"美化の書き方"の標本であり、当時の甘い評価の記録＝現在の評価姿勢ではない。冷徹な勝敗・LLは上の🧊スコアカードと📒一本化台帳が正（歴史は書き換えず標本として残置）。＞</b></p>
 
     <div style="background:var(--card2);border:1px solid var(--line);border-left:4px solid #d4604f;border-radius:11px;padding:12px 14px;margin:10px 0">
       <b style="color:#ffb27a">2026-07-20 マーキュリーC（良 ／ 結果 ⑬→⑪→⑧ ／ CLV過信＋トップハンデを斤量で軽視して1着取りこぼし）</b>
@@ -412,7 +413,7 @@
         <li><b style="color:#ffb27a">【道悪overlayの過信】血統・道悪実績を主軸に据えたが全滅</b>：◎⑤アブキール(昨年3着＋ファインニードル)・◎⑥オタル(重2勝)・▲⑬イツモ(ビッグアーサー)を「重確定で妙味最大化」と二枚軸に据えたが<b>◎◎○▲▲すべて着外</b>。道悪血統は「2-3着で絡む」補助材料に留めるべきで、それを"本命の主軸"に格上げしたのが誤り。<b>馬場が渋っても地力の序列は大きくは覆らない</b>。</li>
         <li><b style="color:#ffb27a">【CLVの限界を再確認】正CLV(⑤⑥⑬)が来ず、負CLVの⑨が3着</b>：締切に向け短縮した道悪馬⑤⑥⑬は全滅、逆に<b>負CLVで「見限られ」と割引した⑨ヨシノ(4番人気・昨年2着)が3着</b>に粘った。帝王賞では正CLV相手が的中したが、今回はCLVが機能せず＝<b>CLVは「負CLV馬を単独軸にしない」程度の弱い方向補正で、正CLVを妙味の主根拠にはできない</b>（§10-4「CLVも万能でない」の再実証）。⑨を割引の根拠を"昨年2着の地力"より"負CLV"に置いたのは地力軽視だった。</li>
         <li><b style="color:#ffb27a">【軽ハンデ×先行の逃げ天国を軽視】2着②ジェニファーを無印</b>：2着<b>②ジェニファー(9番人気16.0・最軽量50.0・逃げ)</b>を自分p3で<b>無印</b>＝小倉1200「逃げ天国」で最軽量の逃げ馬という当舞台の最重要ファクターを取りこぼした。道悪血統に気を取られ、コース質(前・内・軽ハンデ)の評価が薄れた。</li>
-        <li><b>教訓＝(a)地力最上位の人気馬は"薄根拠で消さない"を絶対規律に（道悪未経験・斤量だけでは消さない、少なくとも相手には残す）。(b)道悪血統・実績は"相手の2-3着補強"に格下げし、本命の主軸にしない。(c)コース質(小倉1200=前/内/軽ハンデ逃げ)を道悪血統より優先。(d)CLVは弱い方向補正に留め、地力評価を上書きさせない。</b><span class="mut">§9-4/§9-9/§10-4/§12(コース馬場13%・近走20%の地力優先)の運用を今回の敗因で再強化。夏はペーパー/回収枠＝勝負枠を張らなかったのが不幸中の幸い。</span></li>
+        <li><b>教訓＝(a)地力最上位の人気馬は"薄根拠で消さない"を絶対規律に（道悪未経験・斤量だけでは消さない、少なくとも相手には残す）。(b)道悪血統・実績は"相手の2-3着補強"に格下げし、本命の主軸にしない。(c)コース質(小倉1200=前/内/軽ハンデ逃げ)を道悪血統より優先。(d)CLVは弱い方向補正に留め、地力評価を上書きさせない。</b><span class="mut">§9-4/§9-9/§10-4/§12(コース馬場13%・近走20%の地力優先)の運用を今回の敗因で再強化。夏はペーパー/回収枠で勝負枠を張らなかった＝実損はゼロだが、それは賭けなかっただけで勝てたわけではない（§14-1「不幸中の幸い」等の美化は使わない）。</span></li>
       </ol>
     </div>
 
