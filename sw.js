@@ -1,6 +1,6 @@
 /* 競馬予想PWA Service Worker
    バージョンを上げる(=CACHEを変える)と、次回オンライン時に更新が反映されます。 */
-const CACHE = 'keiba-yosou-v110';
+const CACHE = 'keiba-yosou-v111';
 
 const ASSETS = [
   './',
@@ -10,6 +10,34 @@ const ASSETS = [
   './score.html',
   './autumn-watch.html',
   './natsu-juusho.html',
+  './2026-07-26_sekiya-kinen/prediction.html',
+  './2026-07-26_sekiya-kinen/odds.html',
+  './2026-07-26_sekiya-kinen/research.html',
+  './2026-07-26_sekiya-kinen/style.css',
+  './2026-07-26_sekiya-kinen/analysis/1_展開予想.html',
+  './2026-07-26_sekiya-kinen/analysis/2_血統.html',
+  './2026-07-26_sekiya-kinen/analysis/3_近走成績.html',
+  './2026-07-26_sekiya-kinen/analysis/4_コース馬場.html',
+  './2026-07-26_sekiya-kinen/analysis/5_オッズ分析.html',
+  './2026-07-26_sekiya-kinen/analysis/6_調教.html',
+  './2026-07-26_sekiya-kinen/analysis/7_指数.html',
+  './2026-07-26_sekiya-kinen/analysis/8_データ傾向.html',
+  './2026-07-26_sekiya-kinen/analysis/9_騎手.html',
+  './2026-07-26_sekiya-kinen/analysis/10_当日.html',
+  './2026-07-26_tokai-s/prediction.html',
+  './2026-07-26_tokai-s/odds.html',
+  './2026-07-26_tokai-s/research.html',
+  './2026-07-26_tokai-s/style.css',
+  './2026-07-26_tokai-s/analysis/1_展開予想.html',
+  './2026-07-26_tokai-s/analysis/2_血統.html',
+  './2026-07-26_tokai-s/analysis/3_近走成績.html',
+  './2026-07-26_tokai-s/analysis/4_コース馬場.html',
+  './2026-07-26_tokai-s/analysis/5_オッズ分析.html',
+  './2026-07-26_tokai-s/analysis/6_調教.html',
+  './2026-07-26_tokai-s/analysis/7_指数.html',
+  './2026-07-26_tokai-s/analysis/8_データ傾向.html',
+  './2026-07-26_tokai-s/analysis/9_騎手.html',
+  './2026-07-26_tokai-s/analysis/10_当日.html',
   './2026-07-01_teio-sho/prediction.html',
   './2026-07-01_teio-sho/odds.html',
   './2026-07-01_teio-sho/research.html',
