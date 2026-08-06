@@ -30,7 +30,7 @@
   <header class="hero">
     <span class="race-tag">オッズ計算機 / CBC賞2026</span>
     <h1>最新オッズで再計算 🧮</h1>
-    <div class="sub"><b style="color:#ffb27a">ステージA＝ハンデ・枠順・オッズ未発表。出走18頭も未確定。</b>下は登録段階の"事前仮p"（暫定）＝<b>ハンデ発表→枠順で正式なp・全頭に更新（Stage B）、オッズを貼れば妙味を計算（Stage C）</b>。想定勝率p・単勝オッズを入れると旧EVが即更新。最終判定は<a href="../bet.html">⚖勝負判定</a>で。</div>
+    <div class="sub"><b style="color:#7ef0bd">ステージB＝出走18頭＋想定ハンデ確定(8/6)。</b>下のpは地力×ハンデ×コース質の暫定自分p（<b>枠バイアス反映前＝枠順で動く</b>）。<b>枠順で枠込みに更新、オッズを貼れば市場ブレンド妙味を計算（Stage C）</b>。単勝オッズを入れると旧EVが即更新。最終判定は<a href="../bet.html">⚖勝負判定</a>で。</div>
   </header>
   <section>
     <div class="controls">
@@ -60,16 +60,29 @@
 </div>
 <script>
 (function(){
-  // CBC賞2026 ステージA=待ち受け。ハンデ/枠/オッズ未発表・出走18頭未確定。
-  // 下は登録段階の主な想定馬のみ＝"事前仮p"(暫定の下ごしらえ)。o=null(オッズ未発表)。Stage Bで全頭・正式pに置換。
+  // CBC賞2026 ステージB=出走18頭+想定ハンデ確定(2026-08-06)・枠順/オッズ未発表。
+  // p=地力×ハンデ×コース質の"暫定自分p"(枠バイアス反映前=枠順で動く)。o=null(オッズ未発表)。Stage B完で枠込み・Cでオッズ反映。
   var BASE = [
-    {name:'インビンシブルパパ', p:16, o:null}, // 昨年覇者・連覇挑戦(前で形)＝当舞台実績最強も前走函館SS10着=状態焦点
-    {name:'タマモイカロス',     p:12, o:null}, // 3歳・葵S3着の速さ＝ハンデ軽量なら妙味
-    {name:'イツモニコニコ',     p:10, o:null}, // 北九州記念4着＝スプリントハンデ実績
-    {name:'アブキールベイ',     p:9,  o:null}, // 北九州記念5着＝同路線の地力
-    {name:'コウセキ',           p:7,  o:null}  // テレQ杯(OP)快勝の上がり馬
+    {name:'レイピア',           p:19, o:null}, // ◎現級最上位=シルクロードS/オーシャンS連続連対・高松宮5着・函館SS3着(57.5)
+    {name:'インビンシブルパパ', p:15, o:null}, // ○昨年覇者・前で形=当舞台の芯(58トップ+前走10着で状態焦点)
+    {name:'ディアナザール',     p:13, o:null}, // ▲左回り3戦無敗=§13-D妙味の芯(56・川田)
+    {name:'ジェニファー',       p:11, o:null}, // ▲最軽量52+北九州記念2着=軽ハンデ穴の芯(必ずゲート)
+    {name:'タマモイカロス',     p:9,  o:null}, // △3歳・芝1200[2.3.1.0]・葵S3着(54)
+    {name:'サンアントワーヌ',   p:8,  o:null}, // △3歳牝・Fレビュー2着・最軽量52
+    {name:'イツモニコニコ',     p:5,  o:null}, // △北九州記念4着・軽量53
+    {name:'アンクルクロス',     p:5,  o:null}, // △北九州上がり最速の差し(56)
+    {name:'コウセキ',           p:3,  o:null}, // △テレQ杯(OP)快勝(55)
+    {name:'クラスペディア',     p:3,  o:null}, // △準トップハンデ57.5
+    {name:'アブキールベイ',     p:2,  o:null}, // 北九州記念5着(55.5)
+    {name:'レッドエヴァンス',   p:2,  o:null}, // フリーウェイS勝ち(55)
+    {name:'タマモブラックタイ', p:1,  o:null}, // 押さえ(57)
+    {name:'ペプチドヤマト',     p:1,  o:null}, // 押さえ(7歳・56)
+    {name:'フィオライア',       p:1,  o:null}, // 押さえ(55)
+    {name:'ナムラローズマリー', p:1,  o:null}, // 押さえ(軽量53)
+    {name:'プロトポロス',       p:0.5,o:null}, // 押さえ以下(53)
+    {name:'フロムダスク',       p:0.5,o:null}  // 押さえ以下(55)
   ];
-  var KEY='cbc-sho-2026-odds-v0';
+  var KEY='cbc-sho-2026-odds-v08';
   var state={}, sortByEv=false;
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); state=s.data||{}; if(s.t)stamp(s.t);}catch(e){state={};} }
   function save(){ var t=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify({data:state,t:t})); }catch(e){} stamp(t); }
