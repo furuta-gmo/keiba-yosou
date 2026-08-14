@@ -30,7 +30,7 @@
   <header class="hero">
     <span class="race-tag">オッズ計算機 / 札幌記念2026</span>
     <h1>最新オッズで再計算 🧮</h1>
-    <div class="sub"><b style="color:#7ef0bd">ステージB＝枠順確定16頭・定量58。</b>下のpは地力×コース質の暫定committed自分p。<b>★堅め＝本命型でアドマイヤテラ断然（単勝は過剰＝買わない）。相手にEV≥1.0が出れば回収枠で軽く</b>。オッズを貼れば妙味を計算。最終判定は<a href="../bet.html">⚖勝負判定</a>で。</div>
+    <div class="sub"><b style="color:#7ef0bd">ステージC＝8/14予想オッズ反映。</b><b style="color:#ffb27a">+EV馬ゼロ（最高⑬グランディア0.95・⑥ローシャム0.91）＝★堅めの見送りをEVが裏付け</b>。◎⑩アドマイヤテラ(2.6)は過剰＝単勝買わない。張るなら回収枠で⑬⑥を軽く相手に。当日終値でCLV。最終判定は<a href="../bet.html">⚖勝負判定</a>で。</div>
   </header>
   <section>
     <div class="controls">
@@ -59,26 +59,26 @@
 </div>
 <script>
 (function(){
-  // 札幌記念2026 馬番順。o=null(オッズ未発表)。p=地力×コース質の暫定committed自分p。本命型(アドマイヤテラ断然)。
+  // 札幌記念2026 馬番順。o=8/14予想オッズ。p=Stage C是正後(§14aでシェイク=市場3人気を引上げ)。本命型・+EV馬ゼロ=見送り基調。
   var BASE = [
-    {name:'オニャンコポン',      p:3,  o:null},
-    {name:'イガッチ',            p:1,  o:null},
-    {name:'ピンクジン',          p:1,  o:null},
-    {name:'マジックサンズ',      p:3,  o:null}, // 一昨年札幌2歳王者
-    {name:'エコロヴァルツ',      p:6,  o:null}, // △G2/G3堅実
-    {name:'ローシャムパーク',    p:11, o:null}, // ○GI/G2実績(休み明け焦点)
-    {name:'ショウヘイ',          p:14, o:null}, // ○AJCC覇者・川田
-    {name:'サクラファレル',      p:8,  o:null}, // ▲エプソムC1番人気
-    {name:'マイネルモーント',    p:1,  o:null},
-    {name:'アドマイヤテラ',      p:28, o:null}, // ◎断然=阪神大賞典レコードV・天皇賞春3着(単勝過剰=連/複軸)
-    {name:'アラタ',              p:2,  o:null},
-    {name:'ゼンダンハヤブサ',    p:3,  o:null}, // 小倉記念1着(10人気激走=再現性課題)
-    {name:'グランディア',        p:8,  o:null}, // ▲新潟大賞典V
-    {name:'レディネス',          p:2,  o:null},
-    {name:'シェイクユアハート',  p:4,  o:null}, // 金鯱賞V
-    {name:'ホウオウビスケッツ',  p:5,  o:null}  // 中距離重賞級
+    {name:'オニャンコポン',      p:1,  o:102.6},
+    {name:'イガッチ',            p:1,  o:36.4},
+    {name:'ピンクジン',          p:0.5,o:125.3},
+    {name:'マジックサンズ',      p:3,  o:14.0},
+    {name:'エコロヴァルツ',      p:6,  o:12.2}, // △G2/G3堅実(EV0.78)
+    {name:'ローシャムパーク',    p:10, o:10.8}, // ○GI/G2実績(EV0.91=最上位級の相手)
+    {name:'ショウヘイ',          p:14, o:5.5},  // ○AJCC覇者(EV0.79)
+    {name:'サクラファレル',      p:8,  o:11.1}, // ▲エプソムC1番人気(EV0.84)
+    {name:'マイネルモーント',    p:1,  o:43.9},
+    {name:'アドマイヤテラ',      p:27, o:2.6},  // ◎断然だが単勝過剰(EV0.76=連/複軸・買わない)
+    {name:'アラタ',              p:1,  o:94.5},
+    {name:'ゼンダンハヤブサ',    p:3,  o:32.5}, // 小倉記念1着(再現性課題)
+    {name:'グランディア',        p:7,  o:16.9}, // ▲新潟大賞典V(EV0.95=最も値ごろ・回収枠の相手)
+    {name:'レディネス',          p:2,  o:23.9},
+    {name:'シェイクユアハート',  p:8,  o:9.7},  // §14a=市場3人気ゆえ引上げ・金鯱賞V(EV0.79)
+    {name:'ホウオウビスケッツ',  p:4,  o:29.5}
   ];
-  var KEY='sapporo-kinen-2026-odds-v1';
+  var KEY='sapporo-kinen-2026-odds-v2c';
   var state={}, sortByEv=false;
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); state=s.data||{}; if(s.t)stamp(s.t);}catch(e){state={};} }
   function save(){ var t=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify({data:state,t:t})); }catch(e){} stamp(t); }
