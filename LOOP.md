@@ -45,7 +45,7 @@
 ## 6. 起動機構（3択・恒久性が違う）
 - **A. CronCreate（セッション内）**：このClaudeセッションが起きている間だけ発火・**7日で失効**。短期デモ・今週末1回に向く。
 - **B. Windows タスクスケジューラ → ヘッドレス `claude -p`**：PCが起動していれば恒久。ローカル依存。
-- **C. GitHub Actions（スケジュール workflow）**：クラウドで**真の無人・数ヶ月**。要 `ANTHROPIC_API_KEY` secret＋実行スクリプト。**恒久ループの本命**。
+- **C. GitHub Actions（スケジュール workflow）**：クラウドで**真の無人・数ヶ月**。要 `ANTHROPIC_API_KEY` secret＋実行スクリプト。**恒久ループの本命**。**2026-09-08実装済み**＝`.github/workflows/keiba-loop.yml`（木・金・土・日・月の1日2回、JST10:00/19:00に本ループを自動起動）。**要ユーザー作業＝リポジトリSecretsに`ANTHROPIC_API_KEY`を登録**（GitHub上のSettings→Secrets and variables→Actions、または`gh secret set ANTHROPIC_API_KEY`）。未登録の間はワークフローは実行はされるがAPI呼び出しで失敗する＝Actionsのrun履歴で気づける（従来のA/Bのような"サイレントに何も起きない"失敗ではない）。
 
 ## 7. 期末（20-30R）にだけ人がやること
 較正データ（self LL・ゲート較正・回収率）を根拠に、`loop-report.md`の提案を検討し、**必要ならCLAUDE.md §13を人手で改訂**（区間で読む・大破の検出のみ・市場超えの証明には非充分＝§13-C読み方の規律）。ここだけは自動化しない。

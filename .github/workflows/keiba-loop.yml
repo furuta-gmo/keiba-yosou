@@ -1,0 +1,43 @@
+name: keiba-loop
+
+# LOOP.md の自律ループを無人・恒久で回すための本命機構（LOOP.md §6-C）。
+# 9/6 京成杯オータムH+セントウルS取りこぼし（cron未登録+VDI移行+ping不発の三重穴）の再発防止。
+on:
+  schedule:
+    # UTC 01:00 / 10:00 = JST 10:00 / 19:00。木・金・土・日・月(結果キャッチアップ用)に実行。
+    - cron: '0 1,10 * * 4,5,6,0,1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: keiba-loop
+  cancel-in-progress: false
+
+jobs:
+  run-loop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Configure git identity & push credentials
+        run: |
+          git config user.name "keiba-loop-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+
+      - name: Run autonomous loop
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          claude -p "このリポジトリの LOOP.md に厳密に従ってください。natsu-juusho.html / autumn-watch.html から『今日から3日以内 or 今週末』の重賞を特定し、★★★のみ深掘り対象として現在のステージ(A〜E)を自動判定し、該当作業だけ実行してください。データ取得に失敗した場合は捏造せず loop-report.md に失敗として記録し停止してください(LOOP.md §0-5)。ルール・パラメータ(§9〜14・ゲート・閾値等)は変更せず、変更が必要なら loop-report.md に提案として書くだけにしてください。作業完了後は sw.js の CACHE 版を上げ、LOOP.md §4-5 の手順通り commit して push してください。" \
+            --dangerously-skip-permissions
