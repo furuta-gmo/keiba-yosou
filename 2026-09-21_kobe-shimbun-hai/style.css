@@ -1,0 +1,105 @@
+:root{
+  --bg:#0f1620; --card:#16202c; --card2:#1c2836; --line:#2b3a4d;
+  --tx:#e8eef5; --mut:#9fb0c3; --acc:#2dd4bf; --acc2:#38bdf8;
+  --gold:#f5c542; --buy:#16a34a; --red:#dc2626; --red2:#f97316; --warn:#fbbf24;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(160deg,#0c121b,#101a26);color:var(--tx);
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 18px 80px}
+a{color:var(--acc2);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* HERO */
+header.hero{background:radial-gradient(120% 140% at 0% 0%,#1b3a5b,#10202f 60%);
+  border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin-bottom:22px;
+  position:relative;overflow:hidden}
+header.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(45,212,191,.18),transparent 70%)}
+.race-tag{display:inline-block;font-size:12px;letter-spacing:.12em;color:var(--acc);
+  border:1px solid var(--acc);border-radius:999px;padding:3px 12px;margin-bottom:10px}
+h1{margin:.1em 0 .15em;font-size:28px;letter-spacing:.02em}
+.sub{color:var(--mut);font-size:14px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.chip{background:#0e1a26;border:1px solid var(--line);border-radius:10px;
+  padding:6px 12px;font-size:13px;color:var(--mut)}
+.chip b{color:var(--tx)}
+
+/* SECTION */
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:20px 22px;margin:18px 0}
+h2{font-size:19px;margin:0 0 14px;display:flex;align-items:center;gap:9px}
+h2 .no{font-size:13px;color:#0c121b;background:var(--acc);border-radius:7px;
+  padding:1px 9px;font-weight:800}
+h3{font-size:15px;color:var(--acc2);margin:18px 0 8px}
+p{margin:8px 0}.mut{color:var(--mut)}
+
+/* PICKS */
+.verdict{display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+  background:linear-gradient(90deg,#13351f,#16202c 70%);border:1px solid #1f5436;
+  border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.verdict .big{font-size:20px;font-weight:800;color:#7ef0bd}
+.picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.pick{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.pick .mk{font-size:22px;font-weight:800;margin-right:6px}
+.mk.honmei{color:#ff5d5d}.mk.taikou{color:#5db4ff}.mk.tanana{color:#ffd34d}
+.mk.himo{color:#7ef0bd}.mk.down{color:#9fb0c3}
+.pick .nm{font-weight:700;font-size:16px}
+.pick small{color:var(--mut);display:block;margin-top:3px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0 2px;overflow:hidden;border-radius:10px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{background:#0e1a26;color:var(--acc2);font-size:12.5px;letter-spacing:.03em}
+tbody tr:nth-child(even){background:#13202e}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700}
+.t-buy{background:rgba(22,163,74,.18);color:#5ee08e;border:1px solid #1f7a44}
+.t-red{background:rgba(249,115,22,.16);color:#ffb27a;border:1px solid #b5561f}
+.t-warn{background:rgba(251,191,36,.16);color:#ffd97a;border:1px solid #a9842a}
+.t-mut{background:#1c2836;color:var(--mut);border:1px solid var(--line)}
+.ev-hi{color:#7ef0bd;font-weight:800}
+
+/* MISC */
+.conv{background:#0e1a26;border:1px dashed #2f6f63;border-radius:10px;padding:12px 14px;margin-top:12px}
+.conv b{color:var(--acc)}
+.total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+  background:#0e1a26;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-weight:700}
+.total .amt{font-size:18px;color:var(--gold)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.acard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.acard h4{margin:0 0 6px;font-size:15px;color:var(--acc2)}
+.acard ul{margin:6px 0 0;padding-left:18px}
+.acard li{margin:3px 0;font-size:13.5px}
+.conf{font-size:12px;color:var(--mut);margin-top:8px}
+ol.check{padding-left:20px}ol.check li{margin:6px 0}
+.danger{color:#ff9a8a}
+.warnbox{background:rgba(251,191,36,.08);border:1px solid #6b5a20;border-radius:10px;padding:12px 14px}
+footer{color:var(--mut);font-size:12px;text-align:center;margin-top:30px;border-top:1px solid var(--line);padding-top:16px}
+
+/* NAVIGATION (detail links) */
+.navcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.navcard{display:block;background:var(--card2);border:1px solid var(--line);border-radius:12px;
+  padding:16px;transition:.15s;color:var(--tx)}
+.navcard:hover{border-color:var(--acc);transform:translateY(-2px);text-decoration:none;
+  box-shadow:0 6px 22px rgba(0,0,0,.3)}
+.navcard .ic{font-size:22px}
+.navcard .ti{font-weight:700;margin-top:6px}
+.navcard .ds{color:var(--mut);font-size:12.5px;margin-top:3px}
+.backlink{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--mut);
+  background:#0e1a26;border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin-bottom:16px}
+.backlink:hover{border-color:var(--acc);text-decoration:none}
+.pagenav{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 20px}
+.pagenav a{font-size:12.5px;background:#0e1a26;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--mut)}
+.pagenav a.cur{border-color:var(--acc);color:var(--acc)}
+.pagenav a:hover{text-decoration:none;border-color:var(--acc)}
+
+/* PROSE (detail pages) */
+.prose h3{color:var(--acc2);border-bottom:1px solid var(--line);padding-bottom:6px;margin-top:24px}
+.prose ul{padding-left:20px}.prose li{margin:5px 0}
+.prose strong{color:#fff}
+.lead{font-size:15px;color:var(--tx);background:#0e1a26;border-left:3px solid var(--acc);
+  border-radius:0 10px 10px 0;padding:12px 16px;margin:6px 0 14px}
+
+@media print{body{background:#fff;color:#111}section,.acard,.pick,.navcard{break-inside:avoid}}
