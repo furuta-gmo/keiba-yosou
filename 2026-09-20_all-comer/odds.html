@@ -30,7 +30,7 @@
   <header class="hero">
     <span class="race-tag">オッズ計算機 / オールカマー2026</span>
     <h1>最新オッズで再計算 🧮</h1>
-    <div class="sub"><b style="color:#7ef0bd">ステージB＝枠順確定・一部予想オッズのみ反映。</b>◎⑦レガレイラ(地力最上位)・○⑨コスモキュランダ(二頭軸)・▲妙味の芯⑫エセルフリーダ(中山実績×軽量牝を市場が過小の可能性)。<b>全頭の確定オッズが出たらStage D＝下の貼付欄で一括反映</b>。最終判定は<a href="../bet.html">⚖勝負判定</a>で。</div>
+    <div class="sub"><b style="color:#7ef0bd">ステージC＝netkeiba予想オッズ13頭全反映(orr1.262補正)。</b>◎⑦レガレイラ(地力最上位)・○⑨コスモキュランダ(二頭軸)・▲妙味の芯⑫エセルフリーダ(blendEV1.04)・△⑥パンジャ(§14aでゲート格上げ)。<b>確定オッズが出たらStage D＝下の貼付欄で一括反映</b>。最終判定は<a href="../bet.html">⚖勝負判定</a>で。</div>
   </header>
   <section>
     <div class="controls">
@@ -59,23 +59,23 @@
 </div>
 <script>
 (function(){
-  // オールカマー2026 馬番順。o=予想オッズ(複数サイト平均・9/15-9/18時点・判明分のみ)。p=Stage B暫定自分p(Winner-First・§13-B準拠=リピート苦戦データで消去せず割引のみ)。
+  // オールカマー2026 馬番順。o=netkeiba予想オッズ(9/18確定・13頭全)。p=Stage C自分p(Winner-First・§14aで⑥パンジャをゲート格上げ=中山7走3勝2着1回+前走サンシャインS高水準)。
   var BASE = [
-    {name:'キャントウェイト',    p:2,  o:null},
-    {name:'ワイドエンペラー',    p:2,  o:null},
-    {name:'リビアングラス',      p:1.5,o:null},
-    {name:'ヴーレヴー',          p:7,  o:null}, // △上昇気配(夏クイーンS3着小差)・軽量牝・距離初のため軽め
-    {name:'アスクドゥポルテ',    p:3,  o:null},
-    {name:'パンジャ',            p:2,  o:15.0},
-    {name:'レガレイラ',          p:35, o:1.65}, // ◎地力最上位=GI3勝・連覇挑戦(リピート苦戦データはあるが消去せず割引のみ§13-B)
-    {name:'メイショウゲキリン',  p:3,  o:null},
-    {name:'コスモキュランダ',    p:24, o:3.65}, // ○中山GI級成績豊富=二頭軸
-    {name:'コスモブッドレア',    p:1,  o:null},
-    {name:'セイウンプラチナ',    p:0.5,o:null},
-    {name:'エセルフリーダ',      p:8,  o:13.85}, // ▲妙味の芯=中山牝馬S勝ち・55kg軽量+8枠外で市場過小の可能性
-    {name:'ジューンテイク',      p:11, o:5.70}  // △当舞台実績2勝だが58kg最重量+8枠外のダブルパンチで割引
+    {name:'キャントウェイト',    p:4,  o:16.2},
+    {name:'ワイドエンペラー',    p:1,  o:37.1},
+    {name:'リビアングラス',      p:1.2,o:30.2},
+    {name:'ヴーレヴー',          p:6,  o:17.3}, // △上昇気配(夏クイーンS3着小差)・軽量牝・距離初のため軽め
+    {name:'アスクドゥポルテ',    p:0.1,o:178.9},
+    {name:'パンジャ',            p:8,  o:14.9}, // △§14(a)でゲート格上げ=中山7走3勝2着1回・前走サンシャインS(同舞台)高水準完勝
+    {name:'レガレイラ',          p:38, o:1.8},  // ◎地力最上位=GI3勝・連覇挑戦(リピート苦戦データはあるが消去せず割引のみ§13-B)。単勝は過剰=連/複軸
+    {name:'メイショウゲキリン',  p:0.6,o:60.1},
+    {name:'コスモキュランダ',    p:23, o:4.1},  // ○中山GI級成績豊富=二頭軸
+    {name:'コスモブッドレア',    p:0.15,o:155.9},
+    {name:'セイウンプラチナ',    p:0.05,o:231.0},
+    {name:'エセルフリーダ',      p:9,  o:15.7}, // ▲妙味の芯=中山牝馬S勝ち・55kg軽量+8枠外・blendEV1.04で唯一の+EV
+    {name:'ジューンテイク',      p:8,  o:8.4}   // △当舞台実績2勝だが58kg最重量+8枠外のダブルパンチで割引
   ];
-  var KEY='all-comer-2026-odds-v1';
+  var KEY='all-comer-2026-odds-v2';
   var state={}, sortByEv=false;
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); state=s.data||{}; if(s.t)stamp(s.t);}catch(e){state={};} }
   function save(){ var t=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify({data:state,t:t})); }catch(e){} stamp(t); }

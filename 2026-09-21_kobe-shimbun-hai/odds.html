@@ -30,7 +30,7 @@
   <header class="hero">
     <span class="race-tag">オッズ計算機 / 神戸新聞杯2026</span>
     <h1>最新オッズで再計算 🧮</h1>
-    <div class="sub"><b style="color:#ff9a8a">ステージA＝枠順・オッズとも未発表。</b>下表のpは暫定の地力ベース（◎ロブチェン・▲妙味候補グリーンエナジー/アルトラムス）。<b>枠順・単勝オッズが出たら下の貼付欄で一括反映してStage Bへ更新。</b></div>
+    <div class="sub"><b style="color:#7ef0bd">ステージA+＝最終11頭確定・netkeiba予想オッズ反映(orr1.235補正)。</b>◎ロブチェン(的中軸)・▲妙味候補グリーンエナジー/ゴーラッキー(§14a格上げ)/アルトラムス。<b>全馬blendEV<1.0＝大妙味なし。枠番が出たら下の貼付欄で一括反映してStage Bへ更新。</b></div>
   </header>
   <section>
     <div class="controls">
@@ -59,24 +59,21 @@
 </div>
 <script>
 (function(){
-  // 神戸新聞杯2026 特別登録14頭(五十音順)。枠順・オッズ未発表=o全てnull。p=Stage A暫定(地力ベースのみ)。
+  // 神戸新聞杯2026 最終11頭(netkeiba予想オッズ人気順・9/18時点・枠番は未発表)。p=Stage A+自分p(§14aでゴーラッキーをゲート格上げ=4戦3勝・唯一の敗戦は距離不足のみ)。
   var BASE = [
-    {name:'ロブチェン',        p:39, o:null}, // ◎二冠馬(皐月賞・ダービー)=断然の地力上位
-    {name:'グリーンエナジー',  p:12, o:null}, // ▲妙味候補=京成杯勝ち・仕切り直しの一戦
-    {name:'アルトラムス',      p:11, o:null}, // ▲妙味候補=ダービー6着(不利度外視可)
-    {name:'コンジェスタス',    p:8,  o:null}, // △回避見立てもあり不確実
-    {name:'エムズビギン',      p:3,  o:null},
-    {name:'エイシンインアウト',p:3,  o:null},
-    {name:'カフジエメンタール',p:3,  o:null},
-    {name:'カムアップローゼス',p:3,  o:null},
-    {name:'ゴーラッキー',      p:3,  o:null},
-    {name:'ショウナンハヤナミ',p:3,  o:null},
-    {name:'シートゥサミット',  p:3,  o:null},
-    {name:'ナリタエスペランサ',p:3,  o:null},
-    {name:'ベルウッドバイオ',  p:3,  o:null},
-    {name:'メイショウナルカミ',p:3,  o:null}
+    {name:'ロブチェン',        p:45, o:1.6},  // ◎二冠馬(皐月賞・ダービー)=断然の地力上位。単勝は過剰=連/複軸
+    {name:'コンジェスタス',    p:9,  o:8.0},
+    {name:'グリーンエナジー',  p:11, o:9.7},  // ▲妙味候補=京成杯勝ち・仕切り直しの一戦でS評価
+    {name:'ゴーラッキー',      p:9,  o:12.0}, // ▲§14(a)でゲート格上げ=4戦3勝・唯一の敗戦は距離不足(1600m)のみ・ルメール3戦3勝
+    {name:'アルトラムス',      p:9,  o:12.4}, // ▲妙味候補=ダービー6着(不利度外視可)
+    {name:'カフジエメンタール',p:5,  o:15.1},
+    {name:'エムズビギン',      p:4,  o:18.0},
+    {name:'ショウナンハヤナミ',p:3,  o:26.0},
+    {name:'カムアップローゼス',p:2,  o:42.8},
+    {name:'シートゥサミット',  p:1.5,o:56.5},
+    {name:'エイシンインアウト',p:1.5,o:62.1}
   ];
-  var KEY='kobe-shimbun-hai-2026-odds-v1';
+  var KEY='kobe-shimbun-hai-2026-odds-v2';
   var state={}, sortByEv=false;
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); state=s.data||{}; if(s.t)stamp(s.t);}catch(e){state={};} }
   function save(){ var t=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify({data:state,t:t})); }catch(e){} stamp(t); }
